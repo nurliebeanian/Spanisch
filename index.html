@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Español para ti – Spanisch-Tutor</title>
+<style>
+:root{--bg:#fbf7f1;--card:#fff;--ink:#2a2420;--mute:#7a6f66;--line:#e8dfd3;--acc:#c8442b;--acc2:#f2b134;--ok:#2f8f5b;--bad:#c0392b;--warn:#fff3d6;--bub:#f3ece2;--nav:#ffffffee}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--card:#26211e;--ink:#f1ebe4;--mute:#a79c91;--line:#3a332e;--acc:#ec6a4f;--acc2:#e0a93a;--ok:#4cc083;--bad:#ef6f61;--warn:#3a3220;--bub:#2f2925;--nav:#1c1917ee}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:720px;margin:0 auto;padding:16px 16px calc(96px + env(safe-area-inset-bottom))}
+section{display:none}section.on{display:block;animation:in .2s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1{margin:0 0 4px;font-size:24px}h2{margin:18px 0 8px;font-size:18px}h3{margin:0 0 6px;font-size:16px}
+nav#nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--nav);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+nav#nav .in{display:flex;width:100%;max-width:720px}
+nav#nav button{flex:1;min-width:0;background:none;border:0;padding:8px 1px 7px;color:var(--mute);font:inherit;font-size:10px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+nav#nav button b{font-size:19px;line-height:1.1}
+nav#nav button.on{color:var(--acc)}
+.small{font-size:13px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.grid{display:grid;gap:10px}
+.row{display:flex;gap:8px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip:disabled{opacity:.6}
+.btn{padding:11px 14px;border-radius:12px;border:0;background:var(--acc);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.ok{background:var(--ok)}
+.btn:disabled{opacity:.5}
+.btn.block{width:100%}
+input[type=text],textarea,select{flex:1;width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+select{flex:none;width:auto;max-width:100%}
+.iconbtn{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:20px;cursor:pointer;flex:none;color:inherit}
+.iconbtn.on{background:var(--acc);color:#fff;animation:p 1s infinite}
+@keyframes p{50%{box-shadow:0 0 0 8px rgba(200,68,43,.2)}}
+.spk{border:0;background:none;cursor:pointer;font-size:16px;padding:0 4px;color:inherit}
+.note{background:var(--warn);border-radius:10px;padding:8px 12px;font-size:14px;margin-bottom:10px}
+.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+.seg{display:flex;background:var(--line);border-radius:12px;padding:3px;margin-bottom:12px}
+.seg button{flex:1;padding:8px 4px;border:0;border-radius:10px;background:none;color:var(--mute);font:inherit;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 14px;border-radius:999px;font-size:14px;font-weight:600;z-index:20;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* Heute */
+.hero{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border-radius:20px;padding:18px}
+.hero h1{font-size:26px}
+.stats{display:flex;gap:16px;margin-top:10px;font-weight:700}
+.stats span small{display:block;font-weight:400;opacity:.9;font-size:12px}
+.goal{display:grid;gap:4px;margin-bottom:10px}
+.goal .t{display:flex;justify-content:space-between;font-size:14px}
+.phrase{font-size:18px;font-weight:600}
+
+/* Sprechen */
+.log{display:flex;flex-direction:column;gap:10px;min-height:100px;margin-bottom:12px}
+.msg{max-width:88%;padding:10px 12px;border-radius:16px;background:var(--bub)}
+.msg.me{align-self:flex-end;background:var(--acc);color:#fff}
+.msg .es{font-size:17px;font-weight:600}
+.msg .de{color:var(--mute);font-size:14px;margin-top:4px;display:none}
+.msg .de.open,.showde .msg .de{display:block}
+.msg .w{cursor:pointer;border-bottom:1px dotted var(--mute)}
+.gloss{font-size:14px;color:var(--acc);margin-top:4px}.gloss:empty{display:none}
+.newrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.newrow:empty{display:none}.newrow .chip{font-size:13px;padding:5px 10px}
+.fixline{font-size:13px;margin-top:6px;padding-top:5px;border-top:1px solid rgba(255,255,255,.45);font-weight:400}
+.goalpill{align-self:center;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--mute);text-align:center}
+.mission{align-self:center;background:var(--ok);color:#fff;border-radius:12px;padding:8px 14px;font-size:14px;font-weight:600;text-align:center}
+.tip{align-self:flex-start;border:1px dashed var(--acc);border-radius:12px;padding:8px 12px;font-size:14px}
+.dots span{animation:b 1s infinite;display:inline-block}.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes b{50%{opacity:.2}}
+.inputbar{position:sticky;bottom:calc(58px + env(safe-area-inset-bottom));background:var(--bg);padding:8px 0 6px;z-index:5}
+.toggles{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.toggles::-webkit-scrollbar{display:none}
+.tg{white-space:nowrap;padding:5px 10px;font-size:13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-family:inherit;cursor:pointer}
+.tg.off{opacity:.5}
+.res{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:12px}
+.res p{margin:0 0 8px}
+
+/* Vokabeln */
+.fc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 16px;text-align:center;min-height:180px;display:flex;flex-direction:column;justify-content:center;gap:8px;cursor:pointer;user-select:none}
+.fc .w{font-size:28px;font-weight:700}
+.fc .hint{font-size:13px;color:var(--mute)}
+.opt{display:block;width:100%;text-align:left;margin-bottom:8px;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.opt.good{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.big{font-size:26px;font-weight:700;text-align:center;margin:8px 0}
+.verdict{text-align:center;font-weight:700;margin:10px 0;min-height:24px}
+
+/* Grammatik */
+.lesson summary{font-weight:700;cursor:pointer;padding:4px 0}
+.lesson table{width:100%;border-collapse:collapse;margin:8px 0;font-size:15px}
+.lesson td,.lesson th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
+.lesson th{color:var(--mute);font-size:13px}
+.ex{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:15px}
+.gap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:16px}
+.gap input{width:120px;flex:none;padding:6px 8px}
+.gap input.good{border-color:var(--ok)}.gap input.bad{border-color:var(--bad)}
+table.tr{width:100%;border-collapse:collapse;margin-top:10px;font-size:15px}
+table.tr td,table.tr th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.tr th{color:var(--mute);font-weight:600;font-size:13px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.chips.scroll::-webkit-scrollbar{display:none}.chips.scroll .chip{white-space:nowrap;flex:none}
+.who{font-size:12px;font-weight:700;color:var(--mute);margin-bottom:2px}
+.scene{align-self:center;text-align:center;font-style:italic;color:var(--mute);font-size:14px;padding:4px 12px}
+.stp{font-size:14px;padding:2px 0}.stp.done{color:var(--ok);text-decoration:line-through}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<main>
+
+<!-- HEUTE -->
+<section id="heute" class="on"></section>
+
+<!-- SPRECHEN -->
+<section id="sprechen">
+  <div class="seg" id="modeSeg"><button data-m="ki">KI-Tutor</button><button data-m="off">Offline (kostenlos)</button></div>
+  <div class="seg" id="lvlSeg"><button data-l="1">Leicht</button><button data-l="2">Normal</button><button data-l="3">Immersion</button></div>
+  <div class="chips scroll" id="scen"></div>
+  <div class="row" id="customRow" style="margin-bottom:10px">
+    <input type="text" id="custom" placeholder="Eigenes Szenario, z. B. Beim Arzt" autocomplete="off">
+    <button class="btn ghost" id="customGo">Los</button>
+  </div>
+  <div class="card" id="stepsBox" style="display:none;margin-bottom:10px"></div>
+  <div class="note" id="aiNote" style="display:none">Der KI-Tutor ist in dieser Ansicht nicht verfügbar. Öffne die App direkt in Claude.</div>
+  <div class="log" id="log"><div class="small">Wähl ein Szenario. Du bekommst eine kleine Mission und redest mit einer Person, nicht mit einem Lehrbuch. Antworte auf Spanisch, Fehler sind okay. Tipp auf ein spanisches Wort zeigt dir die Bedeutung.</div></div>
+  <div class="inputbar">
+    <div class="toggles">
+      <button class="tg off" id="deBtn">🇩🇪 Übersetzung</button>
+      <button class="tg" id="vorBtn">🔊 Vorlesen</button>
+      <button class="tg off" id="slowBtn">🐢 Langsam</button>
+      <button class="tg" id="autoBtn">🎙️ Auto-Senden</button>
+      <button class="tg" id="fbBtn">📋 Feedback</button>
+    </div>
+    <div class="row">
+      <button class="iconbtn micbtn" id="mic" style="display:none" title="Sprechen">🎤</button>
+      <input type="text" id="inp" lang="es" placeholder="Auf Spanisch antworten …" autocomplete="off" autocorrect="off" enterkeyhint="send">
+      <button class="iconbtn" id="tipQ" title="Tipp">💡</button>
+      <button class="btn" id="send">➤</button>
+    </div>
+    <div class="small micnote" style="margin-top:6px"></div>
+  </div>
+</section>
+
+<!-- VOKABELN -->
+<section id="vokabeln">
+  <div class="row" style="margin-bottom:10px">
+    <select id="topicSel"></select>
+    <button class="btn ghost" id="dirBtn">ES → DE</button>
+  </div>
+  <div class="seg" id="vseg">
+    <button data-m="cards" class="on">Karten</button>
+    <button data-m="quiz">Quiz</button>
+    <button data-m="pron">Aussprache</button>
+  </div>
+  <div id="v-cards"></div>
+  <div id="v-quiz" style="display:none"></div>
+  <div id="v-pron" style="display:none"></div>
+</section>
+
+<!-- HÖREN -->
+<section id="hoeren">
+  <h1>Hören</h1>
+  <div class="seg" id="hseg"><button data-m="dialog" class="on">Dialog</button><button data-m="ansage">Durchsage</button><button data-m="schatten">Nachsprechen</button></div>
+  <div id="h-dialog"></div><div id="h-ansage" style="display:none"></div><div id="h-schatten" style="display:none"></div>
+</section>
+
+<!-- GRAMMATIK -->
+<section id="grammatik">
+  <h1>Grammatik</h1>
+  <p class="small">Kurz und für Anfänger. Zu jeder Lektion kannst du dir von der KI neue Übungen erstellen lassen.</p>
+  <div id="baustellen" style="margin-bottom:12px"></div>
+  <div class="grid" id="lessons"></div>
+</section>
+
+<!-- ÜBERSETZER -->
+<section id="uebersetzer">
+  <h1>Übersetzer</h1>
+  <p class="small">Spanischen oder deutschen Satz eingeben. Du bekommst die Übersetzung und jedes Wort einzeln erklärt.</p>
+  <textarea id="tin" rows="3" placeholder="z. B. Quiero un café con leche, por favor."></textarea>
+  <div class="row" style="margin-top:8px"><button class="btn" id="tgo">Übersetzen & erklären</button></div>
+  <div id="tout"></div>
+</section>
+
+</main>
+
+<nav id="nav"><div class="in">
+  <button data-t="heute" class="on"><b>🏠</b>Heute</button>
+  <button data-t="sprechen"><b>🎙️</b>Sprechen</button>
+  <button data-t="vokabeln"><b>🗂️</b>Vokabeln</button>
+  <button data-t="hoeren"><b>🎧</b>Hören</button>
+  <button data-t="grammatik"><b>📖</b>Grammatik</button>
+  <button data-t="uebersetzer"><b>🔤</b>Übersetzer</button>
+</div></nav>
+
+<script>
+/* Läuft die Seite außerhalb von Claude (z. B. GitHub Pages), übernimmt diese Schicht die KI-Anbindung
+   mit deinem eigenen Anthropic-API-Key. Ohne Key läuft der Offline-Modus. Vorlesen und Mikrofon laufen über den Browser. */
+(function(){
+  if(window.claude&&window.claude.use)return;
+  window.__standalone=true;
+  const KEY='esp_apikey';
+  const getKey=()=>{try{return localStorage.getItem(KEY)||''}catch(e){return ''}};
+  const models=()=>{let cheap=false;try{cheap=localStorage.getItem('esp_cheap')==='1'}catch(e){}
+    return cheap?{quick:'claude-haiku-5-5',default:'claude-haiku-5-5',complex:'claude-sonnet-5-5'}:{quick:'claude-haiku-5-5',default:'claude-sonnet-5-5',complex:'claude-opus-5-5'}};
+  async function sample(input,opts){
+    opts=opts||{};
+    const messages=typeof input==='string'?[{role:'user',content:input}]:input;
+    const model=models()[opts.modelTier||'default']||'claude-sonnet-5-5';
+    let res;
+    try{
+      res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':getKey(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:model,max_tokens:1500,stream:true,messages:messages}),signal:opts.signal});
+    }catch(e){throw {code:'network',message:String(e)}}
+    if(!res.ok){throw {code:(res.status===401||res.status===403)?'not_granted':res.status===429?'rate_limited':'error',message:await res.text().catch(()=>'')}}
+    const reader=res.body.getReader(),dec=new TextDecoder();let buf='',text='';
+    for(;;){
+      const r=await reader.read();if(r.done)break;
+      buf+=dec.decode(r.value,{stream:true});
+      let i;
+      while((i=buf.indexOf('\n'))>=0){
+        const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
+        if(line.indexOf('data:')!==0)continue;
+        const d=line.slice(5).trim();if(!d||d==='[DONE]')continue;
+        try{const j=JSON.parse(d);if(j.type==='content_block_delta'&&j.delta&&j.delta.type==='text_delta'){text+=j.delta.text;if(opts.onText)opts.onText({text:text,delta:j.delta.text})}}catch(e){}
+      }
+    }
+    return {text:text,truncated:false};
+  }
+  window.claude={use:async function(n){return (n==='sample'&&getKey())?sample:null}};
+})();
+</script>
+<script>
+(function(){
+/* ================= Helfer ================= */
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+const DAY=864e5;
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const fmt=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>fmt(new Date());
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim()}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+function sim(a,b){a=norm(a);b=norm(b);const L=Math.max(a.length,b.length);return L?1-lev(a,b)/L:1}
+let toastT=null;
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),1100)}
+
+/* ================= Zustand ================= */
+const S=store.get('esp2',null)||{xp:0,streak:0,best:0,last:'',days:{},vocab:{},mine:[]};
+if(!S.migrated){
+  const old=store.get('vok',null);
+  if(old&&typeof old==='object'){Object.keys(old).forEach(k=>{if(!S.vocab[k])S.vocab[k]={box:Math.min(5,old[k]*1),due:Date.now()+(old[k]>=3?3*DAY:0)}})}
+  const om=store.get('mine',null);
+  if(Array.isArray(om)&&!S.mine.length)S.mine=om;
+  S.migrated=1;
+}
+function save(){
+  const keys=Object.keys(S.days).sort();while(keys.length>30)delete S.days[keys.shift()];
+  store.set('esp2',S);
+}
+function dayStat(){const d=today();return S.days[d]||(S.days[d]={msgs:0,cards:0,quiz:0,pron:0})}
+function award(xp,kind){
+  const d=dayStat();if(kind)d[kind]=(d[kind]||0)+1;S.xp+=xp;
+  const t=today();
+  if(S.last!==t){S.streak=(S.last===fmt(new Date(Date.now()-DAY)))?S.streak+1:1;S.last=t;S.best=Math.max(S.best||0,S.streak)}
+  save();if(xp)toast('+'+xp+' XP');
+}
+
+/* ================= Fähigkeiten ================= */
+let sample=null,tts=null,dict=null;
+const useCap=n=>(window.claude&&window.claude.use)?window.claude.use(n).catch(()=>null):Promise.resolve(null);
+let slowMode=false;
+function esVoice(){try{const vs=speechSynthesis.getVoices();return vs.find(v=>/^es[-_]ES/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang))||null}catch(e){return null}}
+function fallbackSpeak(text,slow){
+  try{if('speechSynthesis' in window){
+    speechSynthesis.cancel();
+    const v=esVoice();
+    (String(text).match(/[^.!?]+[.!?]*/g)||[String(text)]).forEach(pt=>{
+      pt=pt.trim();if(!pt)return;
+      const u=new SpeechSynthesisUtterance(pt);u.lang='es-ES';if(v)u.voice=v;u.rate=slow?.7:.9;
+      speechSynthesis.speak(u);
+    });
+  }}catch(e){}
+}
+try{if('speechSynthesis' in window)speechSynthesis.getVoices()}catch(e){}
+function unlockSpeech(){try{if(!tts&&'speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}}catch(e){}}
+async function say(text,forceSlow,voice){
+  const slow=forceSlow||slowMode;
+  text=String(text).replace(/[¿¡]/g,'').replace(/…/g,'');
+  if(tts){try{const o={language:'es-ES',rate:slow?0.8:1};if(voice)o.voice=voice;await tts.speak(text,o)}catch(e){}}
+  else fallbackSpeak(text,slow);
+}
+function needAI(){if(!sample){$('#aiNote').style.display='block';toast('KI hier nicht verfügbar');return true}return false}
+
+const KEYHINT='Tipp fürs Handy: Nutze das 🎤 deiner Tastatur und stell die Tastatur-Sprache auf Spanisch.';
+const Voice={mode:null,listening:false,cb:null,final:'',btn:null,rec:null,was:false,d:null,SR:null,
+  init(d){
+    const self=this;
+    if(d){
+      this.mode='dict';this.d=d;
+      d.onPartial(({text})=>{if(self.cb)self.cb.part((self.final+text).trim())});
+      d.onFinal(({text})=>{self.final+=text+' ';if(self.cb)self.cb.part(self.final.trim())});
+      d.onState(({state})=>{const l=state==='listening';self.setL(l);if(self.was&&!l){const c=self.cb;self.cb=null;if(c)c.end(self.final.trim())}self.was=l});
+    }else{
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+      if(SR){this.mode='sr';this.SR=SR}
+    }
+    this.refresh();refreshHeute();
+  },
+  refresh(){
+    $$('.micbtn').forEach(b=>b.style.display=this.mode?'':'none');
+    $$('.micnote').forEach(n=>n.textContent=this.mode?'Mikrofon antippen und sprechen. Erkennt dein Browser Deutsch statt Spanisch, korrigier kurz im Textfeld.':KEYHINT);
+  },
+  setL(l){this.listening=l;$$('.micbtn').forEach(b=>b.classList.toggle('on',l&&b===this.btn))},
+  denied(){this.mode=null;this.setL(false);this.refresh();$$('.micnote').forEach(n=>n.textContent='Das Mikrofon ist hier gesperrt. '+KEYHINT)},
+  toggle(btn,cb){
+    if(!this.mode)return;
+    if(this.listening){this.stop();return}
+    this.btn=btn;this.cb=cb;this.final='';
+    try{if(tts)tts.stop()}catch(e){}
+    unlockSpeech();
+    if(this.mode==='dict'){
+      this.d.start().catch(e=>{if(e&&e.code==='not_granted')this.denied()});
+    }else{
+      const r=new this.SR();this.rec=r;r.lang='es-ES';r.interimResults=true;r.continuous=false;
+      let txt='';
+      r.onstart=()=>this.setL(true);
+      r.onresult=e=>{txt='';for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;if(this.cb)this.cb.part(txt)};
+      r.onerror=e=>{this.setL(false);if(/not-allowed|service-not-allowed|audio-capture/.test(e.error))this.denied()};
+      r.onend=()=>{this.setL(false);const c=this.cb;this.cb=null;if(c)c.end(txt.trim())};
+      try{r.start()}catch(e){}
+    }
+  },
+  stop(){try{if(this.mode==='dict')this.d.stop();else if(this.rec)this.rec.stop()}catch(e){}}
+};
+const refreshHeute=()=>{if($('#heute').classList.contains('on'))renderHeute()};
+useCap('sample').then(s=>{
+  sample=s;capsReady=true;
+  if(!s){
+    if(!S.mode)offMode=true;
+    if(!window.__standalone)$('#aiNote').textContent='KI ist hier nicht verfügbar. Der Offline-Modus ist aktiv: kostenlos und ohne KI.';
+    $('#aiNote').style.display='block';
+  }
+  if(!s&&window.__standalone)$('#aiNote').textContent='Offline-Modus aktiv (kostenlos). Für den KI-Tutor trag unter Heute → Einstellungen einen Anthropic-API-Key ein.';
+  buildChips();refreshHeute();
+});
+useCap('tts').then(t=>{tts=t;refreshHeute()});
+useCap('dictation').then(d=>Voice.init(d));
+setTimeout(()=>{if(!Voice.mode)Voice.init(null)},1500);
+
+/* ================= Navigation ================= */
+function go(t){
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  $$('main > section').forEach(s=>s.classList.toggle('on',s.id===t));
+  window.scrollTo(0,0);
+  if(t!=='hoeren')stopPlay();
+  if(t==='heute')renderHeute();
+  if(t==='grammatik')renderBaustellen();
+  if(t==='hoeren')initHoeren();
+}
+$$('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+
+/* ================= Vokabeln (Daten) ================= */
+const V={
+'Begrüßung':[['hola','hallo'],['adiós','tschüss'],['buenos días','guten Morgen'],['buenas tardes','guten Tag (nachmittags)'],['buenas noches','gute Nacht / guten Abend'],['por favor','bitte'],['gracias','danke'],['de nada','gern geschehen'],['perdón','Entschuldigung'],['¿Cómo estás?','Wie geht es dir?'],['mucho gusto','freut mich'],['me llamo…','ich heiße …'],['hasta luego','bis später'],['lo siento','es tut mir leid']],
+'Café & Essen':[['un café con leche','ein Milchkaffee'],['el agua','das Wasser'],['el pan','das Brot'],['la cerveza','das Bier'],['el zumo','der Saft'],['la cuenta','die Rechnung'],['quiero…','ich möchte …'],['¿Cuánto cuesta?','Wie viel kostet das?'],['el bocadillo','das belegte Brötchen'],['el desayuno','das Frühstück'],['tengo hambre','ich habe Hunger'],['tengo sed','ich habe Durst'],['la tortilla','das Omelett'],['el queso','der Käse'],['la carne','das Fleisch'],['el pescado','der Fisch'],['la ensalada','der Salat'],['el postre','der Nachtisch']],
+'Zahlen':[['uno','eins'],['dos','zwei'],['tres','drei'],['cuatro','vier'],['cinco','fünf'],['seis','sechs'],['siete','sieben'],['ocho','acht'],['nueve','neun'],['diez','zehn'],['veinte','zwanzig'],['cien','hundert']],
+'Tage & Zeit':[['el lunes','Montag'],['el martes','Dienstag'],['el miércoles','Mittwoch'],['el jueves','Donnerstag'],['el viernes','Freitag'],['el sábado','Samstag'],['el domingo','Sonntag'],['hoy','heute'],['mañana','morgen'],['ayer','gestern'],['la semana','die Woche'],['el mes','der Monat'],['ahora','jetzt'],['siempre','immer'],['nunca','nie']],
+'Familie & Leute':[['la madre','die Mutter'],['el padre','der Vater'],['el hermano','der Bruder'],['la hermana','die Schwester'],['el abuelo','der Opa'],['la abuela','die Oma'],['el amigo','der Freund'],['la amiga','die Freundin'],['el hijo','der Sohn'],['la hija','die Tochter'],['el chico','der Junge'],['la chica','das Mädchen']],
+'Unterwegs':[['¿Dónde está…?','Wo ist …?'],['a la derecha','nach rechts'],['a la izquierda','nach links'],['todo recto','geradeaus'],['la estación','der Bahnhof'],['el aeropuerto','der Flughafen'],['el baño','die Toilette'],['el billete','das Ticket'],['aquí','hier'],['allí','dort'],['cerca','nah'],['lejos','weit'],['la calle','die Straße'],['el autobús','der Bus'],['el tren','der Zug']],
+'Fragewörter':[['¿qué?','was?'],['¿quién?','wer?'],['¿dónde?','wo?'],['¿cuándo?','wann?'],['¿cómo?','wie?'],['¿por qué?','warum?'],['¿cuánto?','wie viel?'],['¿cuál?','welche/r?']],
+'Adjektive':[['grande','groß'],['pequeño','klein'],['bueno','gut'],['malo','schlecht'],['caro','teuer'],['barato','billig'],['nuevo','neu'],['viejo','alt'],['bonito','schön'],['difícil','schwierig'],['fácil','einfach'],['rápido','schnell']],
+'Verben':[['ser','sein (Wesen, Herkunft)'],['estar','sein (Ort, Zustand)'],['tener','haben'],['querer','wollen / mögen'],['hablar','sprechen'],['comer','essen'],['beber','trinken'],['ir','gehen / fahren'],['hacer','machen'],['necesitar','brauchen'],['vivir','wohnen / leben'],['trabajar','arbeiten'],['entender','verstehen'],['comprar','kaufen'],['poder','können'],['saber','wissen']],
+'Beruf & Labor':[['el trabajo','die Arbeit'],['el aprendiz','der Auszubildende'],['la formación','die Ausbildung'],['la farmacia','die Apotheke'],['el laboratorio','das Labor'],['el medicamento','das Medikament'],['la pastilla','die Tablette'],['la empresa','das Unternehmen'],['la fábrica','die Fabrik'],['la planta','die Pflanze'],['la mezcla','die Mischung'],['la prueba','der Test / die Prüfung']],
+'Schule & Unterricht':[['la clase','der Unterricht / die Klasse'],['la profesora','die Lehrerin'],['el profesor','der Lehrer'],['el cuaderno','das Heft'],['el examen','die Prüfung'],['la tarea','die Hausaufgabe'],['el horario','der Stundenplan'],['aprender','lernen'],['estudiar','studieren / lernen'],['repasar','den Stoff wiederholen'],['la nota','die Note'],['la pregunta','die Frage'],['la respuesta','die Antwort'],['repetir','wiederholen (sagen)']],
+'Wetter':[['hace calor','es ist heiß'],['hace frío','es ist kalt'],['hace sol','die Sonne scheint'],['hace viento','es ist windig'],['llueve','es regnet'],['nieva','es schneit'],['la nube','die Wolke'],['la temperatura','die Temperatur'],['el verano','der Sommer'],['el invierno','der Winter']],
+'Zuhause':[['la casa','das Haus'],['el piso','die Wohnung'],['la habitación','das Zimmer'],['la cocina','die Küche'],['la ventana','das Fenster'],['la puerta','die Tür'],['la mesa','der Tisch'],['la silla','der Stuhl'],['la cama','das Bett'],['la llave','der Schlüssel']],
+'Uhrzeit':[['¿Qué hora es?','Wie spät ist es?'],['es la una','es ist eins'],['son las dos','es ist zwei'],['y media','halb (nach)'],['y cuarto','Viertel nach'],['menos cuarto','Viertel vor'],['la hora','die Stunde / Uhrzeit'],['el minuto','die Minute'],['temprano','früh'],['tarde','spät']],
+'Volleyball 🏐':[['el voleibol','Volleyball'],['el balón','der Ball'],['la red','das Netz'],['el entrenador','der Trainer'],['el equipo','die Mannschaft'],['el saque','der Aufschlag'],['el pase','das Zuspiel'],['el remate','der Angriffsschlag'],['el bloqueo','der Block'],['¡Buen trabajo!','Gute Arbeit!'],['el jugador','der Spieler'],['el entrenamiento','das Training']]
+};
+const ALL='Alle',MINE='Meine Wörter ⭐',ERR='Meine Fehler 🎯';
+const allWords=()=>Object.keys(V).flatMap(k=>V[k]).concat(S.mine);
+let topic=ALL,rev=false;
+const words=()=>topic===ALL?allWords():topic===MINE?S.mine:topic===ERR?(S.errors||[]).map(e=>[e.right,e.note||'(richtige Form)']):V[topic];
+const INT=[0,1,2,4,8,16];
+const learned=w=>{const v=S.vocab[w[0]];return v&&v.box>=3};
+const dueCount=()=>{const n=Date.now();return allWords().filter(w=>{const v=S.vocab[w[0]];return v&&v.due<=n}).length};
+
+const sel=$('#topicSel');
+[ALL,MINE,ERR,...Object.keys(V)].forEach(t=>{const o=el('option',null,t);o.value=t;sel.appendChild(o)});
+sel.onchange=()=>{topic=sel.value;resetVokabeln()};
+$('#dirBtn').onclick=function(){rev=!rev;this.textContent=rev?'DE → ES':'ES → DE';renderCard()};
+let vmode='cards';
+$$('#vseg button').forEach(b=>b.onclick=()=>{
+  vmode=b.dataset.m;$$('#vseg button').forEach(x=>x.classList.toggle('on',x===b));
+  ['cards','quiz','pron'].forEach(m=>$('#v-'+m).style.display=(m===vmode)?'':'none');
+  $('#dirBtn').style.display=vmode==='pron'?'none':'';
+  if(vmode==='quiz')startQuiz();
+  if(vmode==='pron')nextPron();
+  if(vmode==='cards')buildQ(false);
+});
+function resetVokabeln(){
+  if(vmode==='cards')buildQ(false);else if(vmode==='quiz')startQuiz();else nextPron();
+}
+function addMine(w,d){
+  if(!S.mine.some(x=>x[0]===w)){S.mine.push([w,d]);save()}
+}
+
+/* ---- Karten ---- */
+let cq=[],flip=false;
+function buildQ(extra){
+  const pool=words(),now=Date.now();
+  const due=pool.filter(w=>{const v=S.vocab[w[0]];return v&&v.due<=now});
+  const fresh=pool.filter(w=>!S.vocab[w[0]]);
+  let q=shuffle(due).concat(shuffle(fresh).slice(0,8));
+  if(!q.length&&extra)q=shuffle(pool).slice(0,10);
+  cq=q;flip=false;renderCard();
+}
+function renderCard(){
+  const box=$('#v-cards');box.innerHTML='';
+  const pool=words();
+  if(!pool.length){const c=el('div','fc');c.appendChild(el('div','w','Noch leer'));c.appendChild(el('div','hint','Sammle Wörter (＋) und Fehler in den Gesprächen, dann landen sie hier.'));c.style.cursor='default';box.appendChild(c);return}
+  const nowT=Date.now();
+  const due=pool.filter(w=>{const v=S.vocab[w[0]];return v&&v.due<=nowT}).length;
+  const fresh=pool.filter(w=>!S.vocab[w[0]]).length;
+  const done=pool.filter(learned).length;
+  const bar=el('div','bar');bar.appendChild(document.createElement('i')).style.width=(100*done/pool.length)+'%';
+  box.appendChild(bar);
+  box.appendChild(el('div','small',due+' fällig · '+fresh+' neu · '+done+' von '+pool.length+' gelernt'));
+  if(!cq.length){
+    const c=el('div','fc');c.style.cursor='default';c.style.marginTop='10px';
+    c.appendChild(el('div','w','🎉 Für heute erledigt'));
+    c.appendChild(el('div','hint','Neue Wiederholungen werden automatisch fällig.'));
+    box.appendChild(c);
+    const b=el('button','btn ghost block','Trotzdem zufällig üben');b.style.marginTop='10px';b.onclick=()=>buildQ(true);box.appendChild(b);
+    return;
+  }
+  const w=cq[0];
+  const front=rev?w[1]:w[0],back=rev?w[0]:w[1];
+  const c=el('div','fc');c.style.marginTop='10px';
+  const f=el('div','w',flip?back:front);
+  const esShown=(!rev&&!flip)||(rev&&flip);
+  if(esShown){const s=el('button','spk','🔊');s.onclick=e=>{e.stopPropagation();say(w[0])};f.appendChild(s)}
+  c.appendChild(f);c.appendChild(el('div','hint',flip?'(tippen = zurückdrehen)':'tippen zum Umdrehen'));
+  c.onclick=()=>{flip=!flip;renderCard()};
+  box.appendChild(c);
+  const r=el('div','row');r.style.cssText='margin-top:10px;justify-content:center';
+  const a=el('button','btn ghost','↻ Nochmal'),k=el('button','btn ok','✓ Gewusst');
+  a.onclick=()=>{
+    const x=cq.shift();S.vocab[x[0]]={box:0,due:Date.now()};save();
+    cq.splice(Math.min(cq.length,3),0,x);flip=false;renderCard();
+  };
+  k.onclick=()=>{
+    const x=cq.shift();const v=S.vocab[x[0]]||{box:0,due:0};
+    v.box=Math.min(5,v.box+1);v.due=Date.now()+INT[v.box]*DAY;S.vocab[x[0]]=v;
+    award(1,'cards');flip=false;renderCard();
+  };
+  r.append(a,k);box.appendChild(r);
+}
+
+/* ---- Quiz ---- */
+let Q=null;
+function variants(str){
+  const out=[];
+  String(str).split(/\s*\/\s*/).forEach(p=>{
+    const base=p.replace(/\(.*?\)/g,'').trim();
+    if(base){out.push(norm(base));out.push(norm(base.replace(/^(el|la|los|las|un|una|das|der|die)\s+/i,'')))}
+  });
+  return out.filter(Boolean);
+}
+function startQuiz(){
+  const pool=words(),box=$('#v-quiz');
+  if(pool.length<4){box.innerHTML='';box.appendChild(el('div','note','Für ein Quiz brauchst du mindestens 4 Wörter in diesem Thema.'));return}
+  Q={list:shuffle(pool).slice(0,10),i:0,score:0,typing:Q?Q.typing:false};
+  renderQuiz();
+}
+function renderQuiz(){
+  const box=$('#v-quiz');box.innerHTML='';
+  const m=el('div','seg');
+  const b1=el('button',Q.typing?'':'on','Auswählen'),b2=el('button',Q.typing?'on':'','Tippen');
+  b1.onclick=()=>{Q.typing=false;Q.i=0;Q.score=0;renderQuiz()};b2.onclick=()=>{Q.typing=true;Q.i=0;Q.score=0;renderQuiz()};
+  m.append(b1,b2);box.appendChild(m);
+  if(Q.i>=Q.list.length){
+    const c=el('div','card');c.style.textAlign='center';
+    c.appendChild(el('div','big',Q.score+' / '+Q.list.length));
+    c.appendChild(el('div','small',Q.score>=8?'Stark! 🔥':Q.score>=5?'Gut, weiter so.':'Übung macht den Meister. Die falschen Wörter kommen bald wieder.'));
+    const b=el('button','btn block','Nochmal');b.style.marginTop='12px';b.onclick=startQuiz;c.appendChild(b);
+    box.appendChild(c);return;
+  }
+  const w=Q.list[Q.i];
+  const dir=rev?'de':'es';
+  const q=dir==='es'?w[0]:w[1],a=dir==='es'?w[1]:w[0];
+  box.appendChild(el('div','small','Frage '+(Q.i+1)+' von '+Q.list.length));
+  const qq=el('div','big',q);
+  if(dir==='es'){const s=el('button','spk','🔊');s.onclick=()=>say(w[0]);qq.appendChild(s)}
+  box.appendChild(qq);
+  const verdict=el('div','verdict');
+  const finish=ok=>{
+    if(ok){Q.score++;award(2,'quiz')}else{S.vocab[w[0]]={box:0,due:Date.now()};save()}
+    setTimeout(()=>{Q.i++;renderQuiz()},ok?800:1600);
+  };
+  if(!Q.typing){
+    const others=shuffle(allWords().filter(x=>x[0]!==w[0]&&(dir==='es'?x[1]:x[0])!==a)).slice(0,3);
+    const opts=shuffle([w].concat(others));
+    opts.forEach(o=>{
+      const t=dir==='es'?o[1]:o[0];
+      const b=el('button','opt',t);
+      b.onclick=()=>{
+        $$('#v-quiz .opt').forEach(x=>x.disabled=true);
+        const ok=o===w;
+        b.classList.add(ok?'good':'bad');
+        if(!ok){$$('#v-quiz .opt').forEach(x=>{if(x.textContent===a)x.classList.add('good')})}
+        verdict.textContent=ok?'Richtig!':'Richtig wäre: '+a;
+        finish(ok);
+      };
+      box.appendChild(b);
+    });
+  }else{
+    const r=el('div','row');
+    const inp=el('input');inp.type='text';inp.placeholder=dir==='es'?'Auf Deutsch …':'Auf Spanisch …';inp.autocomplete='off';
+    if(dir==='de')inp.lang='es';
+    const go=el('button','btn','Prüfen');
+    const check=()=>{
+      if(go.disabled)return;go.disabled=true;inp.disabled=true;
+      const got=norm(inp.value),ok=variants(a).includes(got);
+      verdict.textContent=ok?(norm(inp.value)===inp.value.toLowerCase().trim()||dir==='es'?'Richtig!':'Richtig! Mit Akzent: '+a):'Richtig wäre: '+a;
+      verdict.style.color=ok?'var(--ok)':'var(--bad)';
+      finish(ok);
+    };
+    go.onclick=check;inp.addEventListener('keydown',e=>{if(e.key==='Enter')check()});
+    r.append(inp,go);box.appendChild(r);
+    setTimeout(()=>{try{inp.focus()}catch(e){}},50);
+  }
+  box.appendChild(verdict);
+}
+
+/* ---- Aussprache ---- */
+let pronW=null;
+function nextPron(){
+  const pool=words();const box=$('#v-pron');box.innerHTML='';
+  if(!pool.length){box.appendChild(el('div','note','Noch keine Wörter in diesem Thema.'));return}
+  let w;do{w=pool[Math.floor(Math.random()*pool.length)]}while(pool.length>1&&pronW&&w[0]===pronW[0]);
+  pronW=w;
+  box.appendChild(el('div','small','Hör zu, sprich nach, und ich prüfe, was ich verstanden habe.'));
+  const big=el('div','big',w[0]);box.appendChild(big);
+  box.appendChild(el('div','small',w[1])).style.textAlign='center';
+  const r=el('div','row');r.style.cssText='justify-content:center;margin:12px 0';
+  const h=el('button','btn ghost','🔊 Anhören'),sl=el('button','btn ghost','🐢 Langsam');
+  h.onclick=()=>say(w[0]);sl.onclick=()=>say(w[0],true);
+  const mic=el('button','iconbtn micbtn','🎤');
+  const res=el('div','verdict');
+  const typed=el('input');typed.type='text';typed.placeholder='Oder tippe, was du gesagt hast …';typed.lang='es';typed.autocomplete='off';
+  const checkTxt=txt=>{
+    const s=sim(txt,w[0]);
+    if(!txt.trim()){res.textContent='Ich habe nichts verstanden. Nochmal?';res.style.color='var(--bad)';return}
+    if(s>=.85){res.textContent='✅ Sehr gut!';res.style.color='var(--ok)';award(2,'pron');S.vocab[w[0]]=S.vocab[w[0]]||{box:1,due:Date.now()+DAY};save()}
+    else if(s>=.6){res.textContent='Fast! Verstanden habe ich: „'+txt+'“';res.style.color='var(--acc2)'}
+    else{res.textContent='Verstanden habe ich: „'+txt+'“. Nochmal?';res.style.color='var(--bad)'}
+  };
+  mic.onclick=()=>{res.textContent='';Voice.toggle(mic,{part:t=>{typed.value=t},end:t=>{if(t){typed.value=t;checkTxt(t)}}})};
+  r.append(h,sl,mic);box.appendChild(r);
+  const chk=el('button','btn','Prüfen');chk.onclick=()=>checkTxt(typed.value);
+  const row2=el('div','row');row2.append(typed,chk);box.appendChild(row2);
+  box.appendChild(res);
+  const nx=el('button','btn ghost block','Nächstes Wort →');nx.style.marginTop='8px';nx.onclick=nextPron;box.appendChild(nx);
+  box.appendChild(el('div','small micnote')).style.marginTop='8px';
+  Voice.refresh();
+}
+
+/* ================= Offline-Modus (ohne KI, ohne Kosten) ================= */
+let off=null,offMode=(S.mode==='off');
+let capsReady=false;
+const offlineNow=()=>offMode||(capsReady&&!sample);
+
+/* Skripte: [Satz der Figur, Übersetzung, Schlüsselwörter (alle Gruppen müssen treffen), Musterantwort]
+   Schlüsselwörter: Wortanfang, mit "=" nur das ganze Wort. */
+const SCRIPTS={
+  cafe:{n:'☕ Café',who:'Marta',voice:'airy',setting:'Café Sol in Madrid, Vormittag. Marta steht hinter der Theke.',goal:'Bestell etwas zu trinken und zu essen und bezahl.',end:['¡Que tengas un buen día!','Hab einen schönen Tag!'],steps:[
+    ['¡Hola, buenos días! ¿Qué te pongo?','Hallo, guten Morgen! Was darf es sein?',[['cafe','cortado','=te','zumo','agua','cerveza','cola','leche','infusion','quier','pon','dam']],'Quiero un café con leche, por favor.'],
+    ['¡Marchando! ¿Quieres algo de comer? Tenemos tostadas y bocadillos.','Kommt sofort! Möchtest du etwas essen? Wir haben Toast und belegte Brötchen.',[['tostad','bocadill','tortilla','croissant','napolitana','bolleria','pan','sandwich','nada','=no','=si','quier']],'Sí, una tostada con tomate, por favor.'],
+    ['Muy bien. Son tres euros con cincuenta. ¿Pagas con tarjeta o en efectivo?','Gut. Das macht 3,50 €. Zahlst du mit Karte oder bar?',[['tarjeta','efectivo','cash','metalico','=con','pago','pagar']],'Con tarjeta, por favor.'],
+    ['Perfecto. Aquí tienes. ¡Que tengas un buen día!','Perfekt. Bitte sehr. Hab einen schönen Tag!',[['gracias','adios','hasta','igual','buen dia','vale']],'Gracias, igualmente. ¡Adiós!']]},
+  restaurante:{n:'🍽️ Restaurant',who:'Javier',voice:'buttery',setting:'Eine Tapas-Bar in Sevilla am Abend. Javier kommt an deinen Tisch.',goal:'Bestell Getränk und Essen und bitte um die Rechnung.',end:['¡Buenas noches y hasta pronto!','Gute Nacht und bis bald!'],steps:[
+    ['Buenas noches. ¿Mesa para cuántos?','Guten Abend. Ein Tisch für wie viele?',[['dos','tres','cuatro','=uno','=una','=solo','somos','mesa','persona']],'Una mesa para dos, por favor.'],
+    ['Perfecto, sigan por aquí. ¿Qué quieren beber?','Perfekt, folgen Sie mir. Was möchten Sie trinken?',[['agua','cerveza','vino','cana','refresco','cola','zumo','tinto','blanco','beber','quier']],'Una cerveza y un agua, por favor.'],
+    ['Hoy tenemos paella y pescado fresco. ¿Qué van a pedir?','Heute haben wir Paella und frischen Fisch. Was nehmen Sie?',[['paella','pescado','carne','ensalada','tortilla','pollo','quier','pedir','tomar','para mi']],'Yo quiero la paella, por favor.'],
+    ['¡Excelente elección! ¿Algo más?','Ausgezeichnete Wahl! Noch etwas?',[['=no','nada','postre','pan','mas','cuenta']],'No, gracias. Después la cuenta, por favor.'],
+    ['Aquí está la cuenta. Son veinticuatro euros.','Hier ist die Rechnung. Das sind 24 Euro.',[['tarjeta','efectivo','gracias','toma','aqui','vale','propina']],'Con tarjeta, por favor. Todo estaba muy rico.']]},
+  camino:{n:'🧭 Weg fragen',who:'Carmen',voice:'rounded',setting:'Eine Straße in Barcelona. Du hast dich verlaufen und sprichst Carmen an.',goal:'Frag nach dem Weg zum Bahnhof.',end:['¡Buen viaje!','Gute Reise!'],steps:[
+    ['Hola, ¿necesitas ayuda?','Hallo, brauchst du Hilfe?',[['estacion','donde','perdon','disculp','tren','ayuda','=si','=hola']],'Perdone, ¿dónde está la estación, por favor?'],
+    ['Ah, la estación. Sigue todo recto y gira a la izquierda en el semáforo.','Ach, der Bahnhof. Geh geradeaus und biege an der Ampel links ab.',[['recto','izquierda','semaforo','repet','entend','vale','gracias','despacio']],'Todo recto y luego a la izquierda, ¿verdad?'],
+    ['Exacto. Luego caminas cinco minutos. Está cerca.','Genau. Dann gehst du fünf Minuten. Er ist nah.',[['cerca','minut','lejos','cuanto','gracias','vale','perfecto']],'¿Está lejos? Muchas gracias.'],
+    ['No, está muy cerca. ¡Buen viaje!','Nein, er ist ganz nah. Gute Reise!',[['gracias','adios','hasta','igual']],'Muchas gracias. ¡Adiós!']]},
+  fiesta:{n:'👋 Sich vorstellen',who:'Lucía',voice:'glassy',setting:'Eine Wohnungsparty in Madrid. Lucía lächelt dich an.',goal:'Stell dich vor und unterhalte dich mit Lucía.',end:['¡Qué bien hablar contigo! Hasta luego.','Schön, mit dir zu reden! Bis später.'],steps:[
+    ['¡Hola! No nos conocemos. Me llamo Lucía. ¿Y tú?','Hallo! Wir kennen uns nicht. Ich heiße Lucía. Und du?',[['me llamo','soy','=yo','nombre','mucho gusto','encantad']],'Hola, me llamo … Mucho gusto.'],
+    ['Mucho gusto. ¿De dónde eres?','Freut mich. Woher kommst du?',[['=de','alemania','aleman','baviera','vivo','soy']],'Soy de Alemania.'],
+    ['¡Qué bien! ¿Y qué haces? ¿Trabajas o estudias?','Schön! Und was machst du? Arbeitest du oder studierst du?',[['trabaj','estudi','aprendiz','formacion','soy']],'Soy aprendiz y trabajo en una empresa.'],
+    ['¡Interesante! ¿Qué te gusta hacer en tu tiempo libre?','Interessant! Was machst du gern in deiner Freizeit?',[['gusta','hobby','paso','tiempo','juego','deporte','voleibol','voley','musica','leer','pelicula','amigos','jugar','practic']],'Me gusta jugar al voleibol.'],
+    ['¡Qué guay! A mí me gusta viajar. ¿Tienes hermanos?','Cool! Ich reise gern. Hast du Geschwister?',[['hermano','hermana','=no','=si','tengo','unico']],'Sí, tengo una hermana. ¿Y tú?']]},
+  billete:{n:'🚆 Ticket kaufen',who:'Pablo',voice:'buttery',setting:'Der Fahrkartenschalter in Valencia. Hinter dir wartet eine Schlange.',goal:'Kauf ein Ticket nach Madrid für morgen.',end:['¡Buen viaje!','Gute Reise!'],steps:[
+    ['Buenos días. ¿Qué desea?','Guten Morgen. Was möchten Sie?',[['billete','ticket','quier','quisier','madrid','necesit']],'Quiero un billete para Madrid, por favor.'],
+    ['¿Para cuándo?','Für wann?',[['manana','hoy','lunes','martes','miercoles','jueves','viernes','sabado','domingo','dia']],'Para mañana, por favor.'],
+    ['¿A qué hora prefiere salir? Hay trenes a las ocho y a las once.','Um wie viel Uhr möchten Sie abfahren? Es gibt Züge um acht und um elf.',[['ocho','once','manana','tarde','prefier','temprano','hora']],'A las ocho, por favor.'],
+    ['¿Ida o ida y vuelta?','Einfach oder hin und zurück?',[['ida','vuelta','solo','=y']],'Solo ida, por favor.'],
+    ['Son treinta y cinco euros. ¿Cómo paga?','Das macht 35 Euro. Wie zahlen Sie?',[['tarjeta','efectivo','pago','=con']],'Con tarjeta, por favor.']]},
+  hotel:{n:'🏨 Hotel',who:'Sofía',voice:'glassy',setting:'Die Rezeption eines kleinen Hotels in Granada. Du kommst müde vom Flug an.',goal:'Check ein und frag nach Frühstück und WLAN.',end:['¡Que descanse!','Ruhen Sie sich gut aus!'],steps:[
+    ['Buenas tardes, bienvenido. ¿Tiene una reserva?','Guten Tag, willkommen. Haben Sie eine Reservierung?',[['reserva','=si','me llamo','nombre','=no']],'Sí, tengo una reserva a nombre de …'],
+    ['Perfecto, habitación 204, segunda planta. Aquí tiene la llave.','Perfekt, Zimmer 204, zweiter Stock. Hier ist der Schlüssel.',[['gracias','donde','ascensor','vale','perfecto']],'Muchas gracias. ¿Dónde está el ascensor?'],
+    ['A la derecha, al final del pasillo.','Rechts, am Ende des Flurs.',[['gracias','vale','desayuno','wifi','hora']],'Gracias. ¿A qué hora es el desayuno?'],
+    ['El desayuno es de siete a diez, en el comedor.','Das Frühstück ist von sieben bis zehn im Speisesaal.',[['gracias','vale','perfecto','wifi','contrasena','genial']],'Perfecto, gracias. ¿Tienen wifi?'],
+    ['Sí, la contraseña está en la tarjeta. ¡Que descanse!','Ja, das Passwort steht auf der Karte. Gute Erholung!',[['gracias','buenas noches','hasta','igual']],'Gracias, buenas noches.']]},
+  farmacia:{n:'💊 Apotheke',who:'Elena',voice:'airy',setting:'Eine Apotheke in Málaga. Du brauchst etwas gegen Kopfschmerzen.',goal:'Erkläre dein Problem und kauf ein Mittel.',end:['¡Que se mejore!','Gute Besserung!'],steps:[
+    ['Buenas tardes. ¿En qué puedo ayudarle?','Guten Tag. Wie kann ich Ihnen helfen?',[['dolor','cabeza','pastilla','medicina','necesit','quier','tengo']],'Tengo dolor de cabeza. ¿Tiene algo, por favor?'],
+    ['Puedo darle paracetamol. ¿Es usted alérgico a algún medicamento?','Ich kann Ihnen Paracetamol geben. Sind Sie gegen ein Medikament allergisch?',[['=no','alerg','=si','nada']],'No, no soy alérgico.'],
+    ['De acuerdo. Tome una pastilla cada ocho horas, después de comer.','Gut. Nehmen Sie alle acht Stunden eine Tablette, nach dem Essen.',[['cada','hora','una','pastilla','repet','vale','cuantas','dia']],'¿Cuántas pastillas puedo tomar al día?'],
+    ['Máximo tres al día. Son cuatro euros con cincuenta.','Höchstens drei pro Tag. Das macht 4,50 €.',[['tarjeta','efectivo','gracias','toma','vale','=con']],'Con tarjeta. Muchas gracias.']]},
+  mercado:{n:'🛒 Markt',who:'Don Pepe',voice:'rounded',setting:'Der Mercado Central in Valencia. Orangen und Käse stapeln sich am Stand.',goal:'Kauf Orangen und Käse und handle den Preis herunter.',end:['¡Vuelva pronto!','Kommen Sie bald wieder!'],steps:[
+    ['¡Pase, pase! Las mejores naranjas de Valencia. ¿Qué le pongo?','Kommen Sie! Die besten Orangen Valencias. Was darf es sein?',[['naranja','kilo','quier','pon','queso','dame','dos','medio']],'Quiero un kilo de naranjas, por favor.'],
+    ['Muy bien. ¿Y un poco de queso? Es de mi pueblo.','Sehr gut. Und etwas Käse? Der ist aus meinem Dorf.',[['queso','=si','=no','gracias','cuanto','precio','cuesta']],'Sí, quiero un poco de queso. ¿Cuánto cuesta?'],
+    ['El queso, doce euros el kilo. Con las naranjas son quince en total.','Der Käse kostet 12 € das Kilo. Mit den Orangen sind es 15 € insgesamt.',[['caro','barato','menos','descuento','rebaja','precio','demasiado']],'Es un poco caro. ¿Me hace un descuento?'],
+    ['Vale, vale, por ser usted, trece euros.','Na gut, weil Sie es sind: 13 Euro.',[['vale','gracias','trato','perfecto','bien','acuerdo','genial']],'Vale, trato hecho. Muchas gracias.']]},
+  clase:{n:'🏫 Unterricht',who:'Señora Ruiz',voice:'glassy',setting:'Spanischunterricht an der FOSBOS, Montag früh. Die Lehrerin ruft dich auf.',goal:'Beantworte die Fragen im Unterricht.',end:['¡Muy bien! Buen trabajo hoy.','Sehr gut! Gute Arbeit heute.'],steps:[
+    ['Buenos días. ¿Puedes presentarte, por favor?','Guten Morgen. Kannst du dich bitte vorstellen?',[['me llamo','soy','nombre','vivo']],'Buenos días. Me llamo … y vivo en …'],
+    ['Muy bien. ¿Qué día es hoy?','Sehr gut. Welcher Tag ist heute?',[['lunes','martes','miercoles','jueves','viernes','sabado','domingo','hoy']],'Hoy es lunes.'],
+    ['Correcto. Ahora, ¿qué te gusta hacer los fines de semana?','Richtig. Und was machst du gern am Wochenende?',[['gusta','fin de semana','juego','salgo','duermo','amigos','deporte','voley','descans']],'Me gusta jugar al voleibol con mis amigos.'],
+    ['Muy bien. Una pregunta más: ¿cuál es tu comida favorita?','Sehr gut. Noch eine Frage: Was ist dein Lieblingsessen?',[['comida','favorit','pizza','pasta','gusta','=no se','repet','entend','despacio']],'Mi comida favorita es la pizza.'],
+    ['¡Perfecto! Gracias por participar.','Perfekt! Danke für deine Teilnahme.',[['gracias','adios','hasta']],'Gracias, señora. ¡Hasta luego!']]},
+  referat:{n:'🎤 Mini-Referat',who:'Señor Molina',voice:'rounded',setting:'Du hältst ein kurzes Referat über dich vor der Klasse. Señor Molina hört zu.',goal:'Stell dich vor und beantworte die Nachfragen.',end:['Muchas gracias. Muy buena presentación.','Vielen Dank. Eine sehr gute Präsentation.'],steps:[
+    ['Adelante. Empieza tu presentación, por favor.','Bitte, fang mit deiner Präsentation an.',[['me llamo','soy','hola','buenos']],'Buenos días. Me llamo … y hoy voy a hablar de mí.'],
+    ['Muy bien. ¿Dónde vives?','Sehr gut. Wo wohnst du?',[['vivo','vive','=en','cerca']],'Vivo en … en Alemania.'],
+    ['¿Y qué haces? ¿Trabajas o estudias?','Und was machst du? Arbeitest du oder studierst du?',[['trabaj','estudi','aprendiz','formacion']],'Estudio y trabajo como aprendiz.'],
+    ['Interesante. ¿Qué quieres hacer en el futuro?','Interessant. Was möchtest du in Zukunft machen?',[['quiero','voy a','futuro','estudiar','trabajar','universidad']],'En el futuro voy a estudiar en la universidad.'],
+    ['Muy bien. Gracias por tu presentación.','Sehr gut. Danke für deine Präsentation.',[['gracias','adios','hasta']],'Muchas gracias.']]}
+};
+/* Kleine Wörterliste für Wort-Antippen und Offline-Übersetzer */
+const FW={cafe:'Kaffee',leche:'Milch',el:'der',la:'die',los:'die (Pl.)',las:'die (Pl.)',un:'ein',una:'eine',de:'von / aus',del:'vom',al:'zum',en:'in / an',y:'und',e:'und',o:'oder',con:'mit',sin:'ohne',para:'für / um zu',por:'für / wegen',que:'dass / was',pero:'aber',muy:'sehr',mas:'mehr',menos:'weniger',yo:'ich',tu:'du / dein',el_:'er',ella:'sie',nosotros:'wir',ellos:'sie (Pl.)',usted:'Sie',mi:'mein',su:'sein / ihr',me:'mir / mich',te:'dir / dich',le:'ihm / ihr',lo:'es / ihn',se:'sich',es:'ist',son:'sind',soy:'ich bin',eres:'du bist',estoy:'ich bin',esta:'ist',estas:'du bist',hay:'es gibt',tiene:'hat',tienes:'du hast',tengo:'ich habe',quiero:'ich möchte',quieres:'du möchtest',quiere:'möchte',quieren:'möchten',puedo:'ich kann',puedes:'du kannst',voy:'ich gehe',vas:'du gehst',va:'geht',vamos:'wir gehen',van:'gehen',tomar:'trinken / nehmen',claro:'klar',bien:'gut',vale:'okay',gracias:'danke',hola:'hallo',adios:'tschüss',algo:'etwas',nada:'nichts',aqui:'hier',alli:'dort',si:'ja / wenn',no:'nicht / nein',donde:'wo',como:'wie',cuando:'wann',cuanto:'wie viel',quien:'wer',cual:'welche/r',por_favor:'bitte',favor:'Gefallen',mucho:'viel',poco:'wenig',todo:'alles',recto:'geradeaus',derecha:'rechts',izquierda:'links',gusta:'gefällt',gustan:'gefallen',tengas:'du mögest haben',dia:'Tag',buen:'gut',buenos:'gut',buenas:'gut',noches:'Nächte / Abend',tardes:'Nachmittag',igualmente:'gleichfalls',marchando:'kommt sofort',pongo:'ich gebe',pasa:'kommt herein',pase:'kommen Sie',perdone:'entschuldigen Sie',perdon:'Entschuldigung',sigue:'folge / geh weiter',gira:'biege ab',cinco:'fünf',tres:'drei',dos:'zwei',cuatro:'vier',seis:'sechs',siete:'sieben',ocho:'acht',nueve:'neun',diez:'zehn',once:'elf',doce:'zwölf',euros:'Euro',euro:'Euro',hoy:'heute',manana:'morgen / Morgen',cerca:'nah',lejos:'weit',tambien:'auch',ahora:'jetzt',luego:'dann / später',despues:'danach',antes:'vorher',siempre:'immer',nunca:'nie'};
+function lookupWord(w){
+  const n=norm(w);if(!n)return null;
+  const clean=x=>x.replace(/[¿?¡!…]/g,'').trim();
+  const all=allWords();
+  for(const x of all){if(norm(x[0])===n)return x[1]}
+  if(FW[n])return FW[n];
+  if(n.length>3){for(const x of all){if(norm(x[0]).split(' ').includes(n))return x[1]+' ('+clean(x[0])+')'}}
+  return null;
+}
+function glossOff(w,b){
+  const r=lookupWord(w);
+  b.gl.textContent=w+' → '+(r||'(offline unbekannt, tippe 🇩🇪 für die ganze Übersetzung)');
+}
+function offMatch(st,text){
+  const n=' '+norm(text)+' ';
+  if(n.trim().length<2)return false;
+  return st[2].every(group=>group.some(k=>k[0]==='='?n.includes(' '+k.slice(1)+' '):n.includes(' '+k)));
+}
+function offSay(es,de){
+  const sc=SCRIPTS[off.k];
+  const b=tutorBubble();b.who.textContent=sc.who;
+  wordify(b.txt,es,b);
+  b.spk.style.display=b.slow.style.display='';
+  b.spk.onclick=()=>say(es,false,sc.voice);b.slow.onclick=()=>say(es,true,sc.voice);
+  if(de){b.de.textContent=de;b.deB.style.display='';b.deB.onclick=()=>b.de.classList.toggle('open')}
+  if(vorlesen)say(es,false,sc.voice);
+  return b;
+}
+function offBot(){
+  const st=SCRIPTS[off.k].steps[off.i];
+  lastTip=st[3];tipLevel=0;tipEl=null;
+  offSay(st[0],st[1]);
+}
+function renderOffSteps(){
+  const b=$('#stepsBox');
+  if(!off){b.style.display='none';return}
+  const sc=SCRIPTS[off.k];b.style.display='';b.innerHTML='';
+  b.appendChild(el('div','small','🎯 Mission: '+sc.goal));
+  const bar=el('div','bar');bar.style.margin='8px 0 4px';
+  const i=document.createElement('i');i.style.width=(100*Math.min(off.i,sc.steps.length)/sc.steps.length)+'%';bar.appendChild(i);b.appendChild(bar);
+  b.appendChild(el('div','small','Schritt '+Math.min(off.i+1,sc.steps.length)+' von '+sc.steps.length));
+}
+function startOff(k){
+  unlockSpeech();
+  cur=null;off={k:k,i:0,fails:0};curName=SCRIPTS[k].who;hist=[];lastTip='';missionDone=false;lastUserEl=null;tipLevel=0;tipEl=null;stepsDone=new Set();
+  $$('#scen .chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  log.innerHTML='';renderOffSteps();go('sprechen');
+  log.appendChild(el('div','scene',SCRIPTS[k].setting));
+  offBot();
+}
+function offSend(v){
+  if(off.i>=SCRIPTS[off.k].steps.length){toast('Fertig! Wähl ein neues Gespräch.');return}
+  if(Voice.listening)Voice.stop();
+  const sc=SCRIPTS[off.k],st=sc.steps[off.i];
+  inp.value='';userBubble(v);
+  if(offMatch(st,v)){
+    award(2,'msgs');
+    if(sim(v,st[3])<0.8)lastUserEl.appendChild(el('div','fixline','Auch gut: '+st[3]));
+    off.fails=0;off.i++;renderOffSteps();
+    if(off.i>=sc.steps.length){
+      setTimeout(()=>{
+        offSay(sc.end[0],sc.end[1]);
+        award(15);
+        log.appendChild(el('div','mission','🎯 Mission geschafft! +15 XP. Probier ein anderes Gespräch oder nochmal dasselbe.'));
+        off.done=true;
+      },500);
+    }else setTimeout(offBot,500);
+  }else{
+    off.fails++;
+    offSay(off.fails%2?'¿Perdón? No te he entendido bien.':'¿Cómo? ¿Puedes repetirlo, por favor?',off.fails%2?'Entschuldigung? Ich habe dich nicht gut verstanden.':'Wie bitte? Kannst du das bitte wiederholen?');
+    if(off.fails>=2){
+      const t=el('div','tip');t.appendChild(document.createTextNode('💡 Muster: '));t.appendChild(el('b',null,st[3]));
+      const sp=el('button','spk','🔊');sp.onclick=()=>say(st[3]);t.appendChild(sp);
+      log.appendChild(t);inp.value=st[3];
+    }else{
+      log.appendChild(el('div','small','Tipp: Tippe auf 💡, wenn du nicht weiterweißt.'));
+    }
+  }
+}
+function offlineTranslate(v,out){
+  const toks=v.split(/\s+/).map(t=>t.replace(/[¿?¡!.,;:()"“”]/g,'')).filter(Boolean);
+  const box=el('div','res');
+  box.appendChild(el('div','small','Offline: nur Wort für Wort aus dem eingebauten Wortschatz. Für ganze Sätze brauchst du die KI.'));
+  const t=el('table','tr');const hr=el('tr');['Wort','Bedeutung',''].forEach(h=>hr.appendChild(el('th',null,h)));t.appendChild(hr);
+  toks.forEach(w=>{
+    const r=lookupWord(w);const tr=el('tr');
+    tr.appendChild(el('td',null,w)).style.fontWeight='600';
+    tr.appendChild(el('td',null,r||'?'));
+    const td=el('td');
+    if(r){const a=el('button','spk','＋');a.title='Zu „Meine Wörter“';a.onclick=()=>{addMine(w,r);a.textContent='✓';a.disabled=true;toast('Gespeichert')};td.appendChild(a)}
+    tr.appendChild(td);t.appendChild(tr);
+  });
+  box.appendChild(t);out.appendChild(box);
+}
+
+/* Hörtexte */
+const LBANK=[
+{k:'dialog',t:'Café',titel:'Im Café',z:[['Marta','Hola, buenos días. ¿Qué quieres tomar?'],['Tom','Un café con leche y una tostada con tomate, por favor.'],['Marta','Claro. ¿Quieres azúcar?'],['Tom','No, gracias. ¿Cuánto es?'],['Marta','Son tres euros con ochenta.']],q:[['Was bestellt Tom?',['Milchkaffee und Toast mit Tomate','Tee und Kuchen','Saft und Croissant'],0],['Möchte er Zucker?',['Ja','Nein','Das sagt er nicht'],1],['Wie viel kostet es?',['3,80 €','3,18 €','8,30 €'],0]]},
+{k:'dialog',t:'Bahnhof',titel:'Am Fahrkartenschalter',z:[['Ana','Buenas tardes. Quisiera un billete para Sevilla, por favor.'],['Empleado','¿Para hoy?'],['Ana','No, para mañana por la mañana.'],['Empleado','Hay un tren a las nueve y diez. Cuesta cuarenta euros.'],['Ana','Perfecto. ¿De qué andén sale?'],['Empleado','Del andén número siete.']],q:[['Wohin will Ana fahren?',['Sevilla','Madrid','Valencia'],0],['Wann?',['Morgen früh','Heute Abend','Übermorgen'],0],['Von welchem Bahnsteig fährt der Zug?',['7','9','10'],0]]},
+{k:'dialog',t:'Wegbeschreibung',titel:'Wo ist das Museum?',z:[['Turista','Perdone, ¿sabe dónde está el museo?'],['Señora','Sí. Siga todo recto hasta la plaza y gire a la derecha.'],['Turista','¿Está lejos?'],['Señora','No, a diez minutos andando. Está al lado de la farmacia.'],['Turista','Muchas gracias.']],q:[['Wie weit geht man geradeaus?',['Bis zum Platz','Bis zur Brücke','Bis zum Bahnhof'],0],['Wohin biegt man ab?',['Rechts','Links','Gar nicht'],0],['Neben welchem Gebäude liegt das Museum?',['Apotheke','Bäckerei','Schule'],0]]},
+{k:'dialog',t:'Arbeit',titel:'Ein voller Arbeitstag',z:[['Laura','¿Cómo va el trabajo?'],['Carlos','Bien, pero hoy tengo mucho que hacer. Tengo una reunión a las diez y otra a las tres.'],['Laura','¿Y a qué hora terminas?'],['Carlos','A las seis. ¿Quedamos para cenar?'],['Laura','Vale, a las ocho.']],q:[['Wann hat Carlos Besprechungen?',['10 und 15 Uhr','9 und 14 Uhr','10 und 16 Uhr'],0],['Wann endet seine Arbeit?',['18 Uhr','16 Uhr','20 Uhr'],0],['Wann essen sie zusammen?',['20 Uhr','18 Uhr','19 Uhr'],0]]},
+{k:'dialog',t:'Wochenende',titel:'Pläne fürs Wochenende',z:[['Sara','¿Qué vas a hacer este fin de semana?'],['Pablo','El sábado voy a jugar al voleibol con mi equipo. Y el domingo quiero descansar.'],['Sara','¡Qué bien! Yo voy a visitar a mi abuela.']],q:[['Was macht Pablo am Samstag?',['Volleyball spielen','Einkaufen','Arbeiten'],0],['Was will er am Sonntag?',['Sich ausruhen','Wandern','Lernen'],0],['Was macht Sara?',['Ihre Oma besuchen','Ins Kino gehen','Zuhause bleiben'],0]]},
+{k:'dialog',t:'Wetter',titel:'Das Wetter',z:[['Ana','¿Qué tiempo hace hoy?'],['Luis','Hace mucho frío y llueve.'],['Ana','Entonces necesito el paraguas y la chaqueta.'],['Luis','Mañana va a hacer sol, pero hace viento.']],q:[['Wie ist das Wetter heute?',['Kalt und Regen','Heiß und sonnig','Windig und trocken'],0],['Was braucht Ana?',['Schirm und Jacke','Sonnenbrille','Mütze und Schal'],0],['Wie wird es morgen?',['Sonnig, aber windig','Regnerisch','Schneereich'],0]]},
+{k:'dialog',t:'Zufall',titel:'Familie',z:[['Eva','¿Tienes hermanos?'],['Marco','Sí, tengo una hermana y un hermano. Mi hermana se llama Marta y tiene veinte años.'],['Eva','¿Y tu hermano?'],['Marco','Mi hermano es más pequeño. Tiene doce años.']],q:[['Wie viele Geschwister hat Marco?',['Zwei','Eins','Drei'],0],['Wie alt ist Marta?',['20','12','22'],0],['Wie alt ist der Bruder?',['12','10','20'],0]]},
+{k:'dialog',t:'Zufall',titel:'Im Restaurant',z:[['Camarero','Buenas noches. ¿Qué van a tomar?'],['Cliente','Para mí, una ensalada y pescado. Y para beber, agua.'],['Camarero','¿Y de postre?'],['Cliente','Después, un flan. Gracias.']],q:[['Was bestellt der Gast zu essen?',['Salat und Fisch','Paella','Fleisch und Kartoffeln'],0],['Was trinkt er?',['Wasser','Wein','Bier'],0],['Was nimmt er als Nachtisch?',['Flan','Eis','Obst'],0]]},
+{k:'ansage',t:'Bahnhof',titel:'Bahnhofsdurchsage',z:[['Ansage','Atención, señores viajeros. El tren con destino a Madrid sale a las diez y media desde la vía tres. Tiene un retraso de quince minutos.']],q:[['Wohin fährt der Zug?',['Madrid','Barcelona','Sevilla'],0],['Von welchem Gleis?',['3','5','13'],0],['Wie viel Verspätung?',['15 Minuten','50 Minuten','Keine'],0]]},
+{k:'ansage',t:'Flughafen',titel:'Flughafendurchsage',z:[['Ansage','Pasajeros del vuelo cuatro cero siete con destino a Barcelona: embarque por la puerta B doce. El embarque termina en veinte minutos.']],q:[['Wohin geht der Flug?',['Barcelona','Berlin','Bilbao'],0],['An welchem Gate?',['B12','B2','D12'],0],['Wann endet das Boarding?',['In 20 Minuten','In 2 Minuten','In 12 Minuten'],0]]},
+{k:'ansage',t:'Supermarkt',titel:'Supermarkt-Angebote',z:[['Ansage','Atención, clientes. Hoy las naranjas están a un euro el kilo y el pan a cincuenta céntimos. La oferta termina a las ocho.']],q:[['Wie viel kosten die Orangen?',['1 € pro Kilo','5 € pro Kilo','1 € pro Stück'],0],['Wie viel kostet das Brot?',['0,50 €','5 €','1 €'],0],['Wann endet das Angebot?',['Um 20 Uhr','Um 18 Uhr','Um 8 Uhr morgens'],0]]},
+{k:'ansage',t:'Radio-Wetter',titel:'Wetterbericht',z:[['Ansage','Y ahora el tiempo. Mañana habrá lluvias en el norte, con temperaturas de doce grados. En el sur, sol y veintitrés grados.']],q:[['Wie wird das Wetter im Norden?',['Regen, 12 Grad','Sonne, 23 Grad','Schnee, 2 Grad'],0],['Und im Süden?',['Sonne, 23 Grad','Regen, 12 Grad','Wind, 13 Grad'],0]]},
+{k:'ansage',t:'Schule',titel:'Schuldurchsage',z:[['Ansage','Atención, alumnos. La clase de español de hoy es en el aula doce. El examen de matemáticas es el viernes a las nueve.']],q:[['In welchem Raum ist Spanisch?',['Raum 12','Raum 2','Raum 9'],0],['Wann ist die Mathe-Prüfung?',['Freitag um 9','Montag um 9','Freitag um 12'],0]]}
+];
+function renderBankListen(kind,topic,box){
+  unlockSpeech();stopPlay();
+  const area=box.querySelector('.larea');
+  let pool=LBANK.filter(x=>x.k===kind&&(topic==='Zufall'||x.t===topic));
+  if(!pool.length)pool=LBANK.filter(x=>x.k===kind);
+  const it=pool[Math.floor(Math.random()*pool.length)];
+  renderListen({titel:it.titel,zeilen:it.z.map(z=>({sprecher:z[0],text:z[1]})),fragen:it.q.map(q=>({frage:q[0],optionen:q[1],richtig:q[2]}))},area);
+}
+
+/* Übungen */
+const EXB={
+  'Artikel':[['___ amigo es simpático. (der)','el','männlich'],['___ casa es grande. (die)','la','weiblich'],['___ libros son nuevos. (die)','los','männlicher Plural'],['Tengo ___ hermana. (eine)','una','weiblich'],['___ chicas juegan al voleibol. (die)','las','weiblicher Plural']],
+  'Regelmäßige':[['Yo ___ (hablar) español.','hablo','yo-Form auf -o'],['Tú ___ (comer) pan.','comes','tú-Form auf -es'],['Ella ___ (vivir) en Madrid.','vive','él/ella auf -e'],['Nosotros ___ (hablar) alemán.','hablamos','nosotros auf -amos'],['Ellos ___ (comer) paella.','comen','ellos auf -en']],
+  'ser und':[['Yo ___ aprendiz. (ser)','soy','Beruf: ser'],['Madrid ___ en España. (estar)','está','Ort: estar'],['Ellos ___ de Alemania. (ser)','son','Herkunft: ser'],['¿Cómo ___ tú? (estar)','estás','Zustand: estar'],['Nosotros ___ cansados. (estar)','estamos','Zustand: estar']],
+  'tener':[['Yo ___ hambre. (tener)','tengo','tener: yo tengo'],['Nosotros ___ a la playa. (ir)','vamos','ir: nosotros vamos'],['¿Qué ___ tú? (querer)','quieres','querer: tú quieres'],['Ella ___ dos hermanos. (tener)','tiene','tener: ella tiene'],['Ellos ___ un café. (querer)','quieren','querer: ellos quieren']],
+  'Zukunft':[['Mañana ___ a estudiar. (yo, ir)','voy','ir: yo voy'],['Nosotros vamos ___ comer.','a','ir + a + Infinitiv'],['¿Qué ___ a hacer tú? (ir)','vas','ir: tú vas'],['Ellos ___ a jugar. (ir)','van','ir: ellos van'],['Ella va a ___ mañana. (trabajar)','trabajar','Infinitiv nach a']],
+  'gustar':[['Me ___ el café.','gusta','Singular: gusta'],['Me ___ los gatos.','gustan','Plural: gustan'],['¿Te ___ cocinar?','gusta','Infinitiv: gusta'],['A él le ___ las películas.','gustan','Plural: gustan'],['Nos ___ viajar.','gusta','Infinitiv: gusta']],
+  'Reflexive':[['Yo me ___ (llamarse) Pablo.','llamo','yo-Form'],['Tú te ___ (levantarse) temprano.','levantas','tú-Form'],['Ella se ___ (ducharse) por la mañana.','ducha','él/ella-Form'],['Nosotros nos ___ (llamarse) Ana y Luis.','llamamos','nosotros-Form'],['Ellos se ___ (levantarse) tarde.','levantan','ellos-Form']],
+  'Perfekt':[['Yo he ___ (comer) ya.','comido','-er wird -ido'],['Ella ha ___ (hablar) con él.','hablado','-ar wird -ado'],['Nosotros hemos ___ (vivir) aquí.','vivido','-ir wird -ido'],['Tú has ___ (ver) la película.','visto','unregelmäßig: visto'],['Ellos han ___ (hacer) la tarea.','hecho','unregelmäßig: hecho']],
+  'Zahlen':[['Es ___ una. (1:00 Uhr)','la','Eins: es la una'],['___ las tres y media.','son','ab zwei: son las'],['Son las dos y ___. (Viertel nach)','cuarto','y cuarto'],['Es la una ___ cuarto. (Viertel vor)','menos','menos cuarto'],['Quedamos ___ las ocho.','a','a las + Uhrzeit']],
+  'Fragen':[['¿___ estás? (Wie)','cómo','Wie = cómo'],['¿___ está la estación? (Wo)','dónde','Wo = dónde'],['¿___ cuesta? (Wie viel)','cuánto','Wie viel = cuánto'],['Yo ___ hablo francés. (nicht)','no','Verneinung: no'],['¿___ te llamas? (Wie)','cómo','Wie = cómo']]
+};
+function offlineEx(L){
+  const key=Object.keys(EXB).find(k=>L.t.indexOf(k)>=0);
+  let pool;
+  if(key)pool=EXB[key];
+  else{const t=norm(L.t);const k2=Object.keys(EXB).find(k=>t.indexOf(norm(k))>=0||(t.indexOf('ser')>=0&&k==='ser und'));pool=k2?EXB[k2]:Object.keys(EXB).flatMap(k=>EXB[k])}
+  return shuffle(pool).slice(0,5).map(x=>({satz:x[0],loesung:x[1],hinweis:x[2]}));
+}
+
+/* ================= Sprechen ================= */
+const SCEN={
+  barista:{n:'☕ Café',name:'Marta',voice:'airy',persona:'Marta (28), Barista im Café Sol in Madrid. Quirlig, redet gern, ist Atlético-Fan und gerade leicht gestresst, weil Hochbetrieb ist.',setting:'Café Sol in Madrid, Vormittag, es ist voll.',goal:'Bestell ein Getränk und etwas zu essen und bezahl.',steps:['Ein Getränk bestellen','Etwas zu essen bestellen','Bezahlen']},
+  vorstellen:{n:'👋 Party',name:'Lucía',voice:'glassy',persona:'Lucía (24), Studentin aus Sevilla, neugierig, lacht viel, neckt gern ein bisschen und liebt Reisen und Musik.',setting:'Eine Wohnungsparty in Madrid, laute Musik, du stehst mit einem Getränk an der Küchentür.',goal:'Stell dich vor und finde zwei Dinge über Lucía heraus.',steps:['Dich vorstellen (Name, Herkunft)','Etwas über Lucía erfragen','Noch etwas über Lucía erfragen']},
+  restaurant:{n:'🍽️ Restaurant',name:'Javier',voice:'buttery',persona:'Javier (45), Kellner in einer Tapas-Bar in Sevilla. Trocken-humorvoll, stolz auf seine Küche, empfiehlt gern und kommentiert die Bestellung.',setting:'Eine Tapas-Bar in Sevilla am Abend. Der Kellner kommt an deinen Tisch.',goal:'Bestell ein Hauptgericht und ein Getränk und frag nach der Rechnung.',steps:['Ein Getränk bestellen','Ein Essen bestellen','Nach der Rechnung fragen']},
+  markt:{n:'🛒 Markt',name:'Don Pepe',voice:'rounded',persona:'Don Pepe (62), Marktverkäufer in Valencia. Redselig, schlitzohrig, lobt seine Ware in den höchsten Tönen und lässt sich nur ungern beim Preis herunterhandeln.',setting:'Der Mercado Central in Valencia. Orangen, Käse und Oliven stapeln sich am Stand.',goal:'Kauf Orangen und Käse und handle den Preis herunter.',steps:['Orangen kaufen','Käse kaufen','Beim Preis handeln']},
+  taxi:{n:'🚕 Taxi',name:'Rafa',voice:'buttery',persona:'Rafa (50), Taxifahrer in Barcelona. Plaudert ununterbrochen, hat zu allem eine Meinung (Fußball, Verkehr, Politik light) und fragt neugierig nach.',setting:'Ein Taxi in Barcelona. Du bist gerade eingestiegen, draußen ist Stau.',goal:'Sag dem Fahrer dein Ziel, frag wie lange es dauert und zahle.',steps:['Das Ziel nennen','Fragen, wie lange es dauert','Bezahlen']},
+  hotel:{n:'🏨 Hotel',name:'Sofía',voice:'glassy',persona:'Sofía (35), Rezeptionistin in einem kleinen Hotel in Granada. Professionell und freundlich, aber heute läuft einiges schief.',setting:'Die Rezeption eines kleinen Hotels in Granada. Du kommst müde vom Flug an.',goal:'Check ein, löse ein Problem mit deinem Zimmer und frag nach dem Frühstück.',steps:['Einchecken (Name, Reservierung)','Das Zimmerproblem klären','Nach dem Frühstück fragen']},
+  apotheke:{n:'💊 Apotheke',name:'Elena',voice:'airy',persona:'Elena (40), Apothekerin in Málaga. Ruhig, kompetent, stellt genaue Rückfragen und erklärt gern.',setting:'Eine Apotheke in Málaga. Du brauchst etwas gegen Kopfschmerzen.',goal:'Erkläre dein Problem, frag nach der Einnahme und bezahl.',steps:['Das Problem beschreiben','Nach der Einnahme fragen','Bezahlen']},
+  interview:{n:'💼 Interview',name:'Beatriz',voice:'rounded',persona:'Beatriz (38), Personalerin bei einem Pharmaunternehmen in Madrid. Freundlich, aber aufmerksam, stellt Nachfragen und testet, wie souverän du bleibst.',setting:'Ein Videocall für ein Praktikum bei einem Pharmaunternehmen in Madrid.',goal:'Stell dich vor, nenne eine Stärke und stell selbst eine Frage.',steps:['Dich vorstellen','Eine Stärke nennen','Eine eigene Frage stellen']},
+  weg:{n:'🧭 Weg fragen',name:'Carmen',voice:'rounded',persona:'Carmen (55), hilfsbereite Anwohnerin in Barcelona. Erklärt gern ausführlich und mit Handbewegungen, schweift aber manchmal ab.',setting:'Eine Straße in Barcelona, du hast dich verlaufen.',goal:'Frag nach dem Weg zum Bahnhof und wiederhole die Wegbeschreibung.',steps:['Nach dem Weg zum Bahnhof fragen','Die Wegbeschreibung wiederholen','Dich bedanken']},
+  bahnhof:{n:'🚆 Ticket',name:'Pablo',voice:'buttery',persona:'Pablo (33), Mitarbeiter am Fahrkartenschalter in Valencia. Effizient, etwas gelangweilt, wird freundlicher, wenn man höflich ist.',setting:'Der Fahrkartenschalter am Bahnhof in Valencia, hinter dir wartet eine Schlange.',goal:'Kauf ein Ticket nach Madrid für morgen.',steps:['Ein Ticket nach Madrid verlangen','Uhrzeit oder Tag klären','Bezahlen']},
+  volley:{n:'🏐 Volleyball',name:'Diego',voice:'buttery',persona:'Diego (41), spanischer Volleyball-Trainer, fachsimpelt gern, lobt Ideen großzügig und hakt bei Trainingsmethoden nach. Du sprichst mit ihm als Trainer-Kollege.',setting:'Nach einem Turnier in Valencia, ihr steht zusammen an der Halle.',goal:'Erzähl, wie du trainierst und wie viele Spieler dein Team hat.',steps:['Erzählen, wie du trainierst','Sagen, wie viele Spieler du hast','Diego etwas zu seinem Training fragen']},
+  reklamieren:{n:'😤 Umtausch',name:'Inés',voice:'airy',persona:'Inés (29), Verkäuferin in einer Boutique in Bilbao. Höflich, aber hält an der Rückgabepolitik fest und lässt sich nur mit guten Argumenten umstimmen.',setting:'Eine Boutique in Bilbao. Du willst einen Pullover umtauschen, der zu klein ist. Es gibt keinen Kassenbon, aber die Etiketten hängen noch dran.',goal:'Tausch den Pullover um oder bekomm dein Geld zurück.',steps:['Das Problem erklären','Nach Umtausch oder Rückgabe fragen','Eine Lösung vereinbaren']},
+  ueberzeugen:{n:'🗣️ Überzeugen',name:'Álvaro',voice:'buttery',persona:'Álvaro (22), dein spanischer Kumpel. Bequem, erfindet Ausreden, ist aber leicht zu überzeugen, wenn du gute Argumente oder ein gutes Angebot hast.',setting:'Ihr schreibt am Freitag per Sprachnachricht. Du willst am Samstag Volleyball spielen, aber Álvaro zögert.',goal:'Überzeuge Álvaro, am Samstag mitzukommen, und mach Uhrzeit und Treffpunkt aus.',steps:['Álvaro einladen','Ein Argument nennen','Uhrzeit und Treffpunkt ausmachen']},
+  unterricht:{n:'🏫 Unterricht',name:'Señora Ruiz',voice:'glassy',persona:'Señora Ruiz (45), Spanischlehrerin. Geduldig und warmherzig, fordert aber zum Sprechen auf, wiederholt langsamer, wenn man nachfragt, und lobt Mut.',setting:'Spanischunterricht an der FOSBOS, Montag früh. Die Lehrerin ruft dich auf.',goal:'Beantworte Fragen im Unterricht und bitte einmal um Wiederholung.',steps:['Dich vorstellen','Eine Frage beantworten','Um Wiederholung bitten oder selbst nachfragen']},
+  referat:{n:'🎤 Mini-Referat',name:'Señor Molina',voice:'rounded',persona:'Señor Molina (50), Lehrer, hört ruhig zu, nickt, stellt dann neugierige Nachfragen und gibt am Ende kurzes Feedback.',setting:'Du hältst ein Mini-Referat über dich auf Spanisch vor der Klasse, danach stellt der Lehrer Fragen.',goal:'Stell dich in mindestens drei Sätzen vor und beantworte zwei Nachfragen.',steps:['Name und Wohnort nennen','Ausbildung oder Hobby nennen','Eine Nachfrage beantworten']},
+  muendlich:{n:'📝 Mündl. Prüfung',name:'Señora García',voice:'buttery',persona:'Señora García (52), Prüferin. Streng, aber fair, bleibt freundlich-neutral und fragt gezielt nach, wenn Antworten zu kurz sind.',setting:'Mündliche Spanischprüfung, 5 Minuten, Thema Alltag und Zukunftspläne.',goal:'Beschreibe deinen Alltag und erzähl von deinen Plänen für nächstes Jahr.',steps:['Deinen Alltag beschreiben','Zukunftspläne nennen (ir a + Infinitiv)','Auf eine Nachfrage reagieren']},
+  austausch:{n:'🏠 Gastfamilie',name:'Pilar',voice:'airy',persona:'Pilar (47), Gastmutter in Salamanca. Warmherzig, fürsorglich, fragt ständig nach dem Essen und dass du dich wohlfühlst.',setting:'Dein erster Abend bei der Gastfamilie in Salamanca. Pilar zeigt dir dein Zimmer.',goal:'Stell dich vor, sag was du gern isst und frag nach den Hausregeln.',steps:['Dich vorstellen','Sagen, was du gern isst','Nach den Hausregeln fragen']},
+  frei:{n:'💬 Frei',name:'Marcos',voice:'rounded',persona:'Marcos (30), entspannter Typ aus Madrid, humorvoll, hört zu und erzählt auch selbst Anekdoten.',setting:'Ein Plausch auf einer Parkbank in Madrid.',goal:'Erzähl etwas über deinen Tag und ein Hobby.',steps:['Etwas über deinen Tag erzählen','Von einem Hobby erzählen','Eine Rückfrage stellen']}
+};
+let cur=null,curName=null,hist=[],lastTip='',busy=false,vorlesen=true,autoSend=true,missionDone=false,lastUserEl=null,tipLevel=0,tipEl=null,stepsDone=new Set();
+const log=$('#log'),inp=$('#inp'),scen=$('#scen');
+function markSeg(){$$('#modeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.m===(offlineNow()?'off':'ki')))}
+function buildChips(){
+  scen.innerHTML='';
+  const o=offlineNow(),src=o?SCRIPTS:SCEN;
+  Object.keys(src).forEach(k=>{if(k==='custom')return;const b=el('button','chip',src[k].n);b.dataset.k=k;b.onclick=()=>o?startOff(k):startScen(k);scen.appendChild(b)});
+  $('#customRow').style.display=o?'none':'';
+  $('#lvlSeg').style.display=o?'none':'';
+  markSeg();
+}
+function setMode(m){
+  if(m==='ki'&&!sample){toast('KI ist hier nicht verfügbar');return}
+  offMode=(m==='off');S.mode=m;save();
+  cur=null;off=null;log.innerHTML='';renderSteps();renderOffSteps();buildChips();
+}
+buildChips();
+$$('#modeSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+$('#customGo').onclick=()=>{
+  const t=$('#custom').value.trim();if(!t)return;
+  SCEN.custom={n:'✨ '+t.slice(0,24),name:null,voice:'rounded',persona:'eine passende, lebendige Person mit eigenem Charakter für diese Situation: '+t+'. Gib ihr einen spanischen Vornamen und ein Alter',setting:'Situation: '+t,goal:'Meistere diese Situation: '+t+'.',steps:['Das Gespräch eröffnen','Dein Anliegen klären','Dich höflich verabschieden']};
+  startScen('custom');
+};
+$$('#lvlSeg button').forEach(b=>{
+  b.classList.toggle('on',+b.dataset.l===(S.lvl||2));
+  b.onclick=()=>{S.lvl=+b.dataset.l;save();$$('#lvlSeg button').forEach(x=>x.classList.toggle('on',x===b));toast('Stufe: '+b.textContent)};
+});
+function renderSteps(){
+  const b=$('#stepsBox');
+  if(!cur){b.style.display='none';return}
+  const sc=SCEN[cur];b.style.display='';b.innerHTML='';
+  b.appendChild(el('div','small','🎯 Mission: '+sc.goal));
+  sc.steps.forEach((s,i)=>b.appendChild(el('div','stp'+(stepsDone.has(i+1)?' done':''),(stepsDone.has(i+1)?'☑ ':'☐ ')+s)));
+}
+function userBubble(t){const m=el('div','msg me');m.appendChild(el('div','es',t));log.appendChild(m);lastUserEl=m;m.scrollIntoView({block:'nearest'})}
+function tutorBubble(){
+  const m=el('div','msg tutor');
+  const who=el('div','who',(curName||'…'));
+  const es=el('div','es');
+  const txt=el('span','txt');txt.innerHTML='<span class="dots"><span>●</span><span>●</span><span>●</span></span>';
+  es.appendChild(txt);
+  const spk=el('button','spk','🔊'),slow=el('button','spk','🐢'),deB=el('button','spk','🇩🇪');
+  spk.style.display=slow.style.display=deB.style.display='none';
+  es.append(spk,slow,deB);
+  const de=el('div','de'),gl=el('div','gloss'),nw=el('div','newrow');
+  m.append(who,es,de,gl,nw);log.appendChild(m);m.scrollIntoView({block:'nearest'});
+  return {m,who,txt,spk,slow,deB,de,gl,nw};
+}
+function parseOut(t){
+  const i=t.indexOf('§');
+  const es=(i<0?t:t.slice(0,i)).trim();
+  const f={};const re=/§(\w+):[ \t]*([^\n§]*)/g;let m;
+  while((m=re.exec(t))){f[m[1].toUpperCase()]=m[2].trim()}
+  return {es,f};
+}
+function wordify(node,es,b){
+  node.textContent='';
+  es.split(/(\s+)/).forEach(tok=>{
+    if(!tok.trim()){node.appendChild(document.createTextNode(tok));return}
+    const clean=tok.replace(/[¿?¡!.,;:()"“”]/g,'');
+    const s=el('span','w',tok);
+    if(clean)s.onclick=()=>gloss(clean,es,b);
+    node.appendChild(s);
+  });
+}
+async function gloss(w,ctx,b){
+  if(offlineNow()||!sample){glossOff(w,b);return}
+  b.gl.textContent=w+' → …';
+  try{
+    const r=await sample('Satz: "'+ctx+'"\nÜbersetze das Wort "'+w+'" in diesem Satz kurz ins Deutsche (max. 5 Wörter). Bei Verben die Grundform in Klammern. Antworte nur mit der Übersetzung.',{modelTier:'quick'});
+    b.gl.textContent=w+' → '+(r.text||'').trim();
+  }catch(e){b.gl.textContent=''}
+}
+function addWordChip(b,w,d){
+  const c=el('button','chip','＋ '+w+' = '+d);
+  if(S.mine.some(x=>x[0]===w)){c.textContent='✓ '+w+' = '+d;c.disabled=true}
+  c.onclick=()=>{addMine(w,d);c.textContent='✓ '+w+' = '+d;c.disabled=true;toast('Gespeichert in „Meine Wörter“')};
+  b.nw.appendChild(c);
+}
+const LVTXT={
+  1:'LEICHT (A1): Sehr einfache, kurze Sätze (höchstens 8 Wörter), nur Grundwortschatz, Gegenwart. Sprich so, als würdest du langsam und deutlich reden, und hilf mit Gesten-Beschreibungen oder Einwort-Alternativen, wenn der Schüler hängt.',
+  2:'NORMAL (A1–A2): Kurze, klare Sätze, Alltagswortschatz, ab und zu ein neues Wort, das man aus dem Kontext erraten kann.',
+  3:'IMMERSION (A2–B1): Natürliches Tempo, Umgangssprache und Füllwörter, Vergangenheit und Zukunft, auch mal eine Redewendung. Hilf nicht von dir aus mit Deutsch, der Schüler soll sich durchbeißen.'
+};
+async function turn(userText){
+  if(needAI())return;
+  if(busy)return;busy=true;$('#send').disabled=true;
+  const sc=SCEN[cur];
+  const first=!userText;
+  const b=tutorBubble();
+  const transcript=hist.slice(-16).map(m=>m.role==='user'?'Schüler: '+m.text:'Du: '+m.es).join('\n');
+  const facts=(S.facts||[]).slice(-12).join('; ');
+  const steps=sc.steps.map((s,i)=>(i+1)+') '+s).join(' ');
+  const topCats=Object.entries(S.errCats||{}).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]).join(', ');
+  const errTxt=topCats?'Häufige Fehlerthemen des Schülers: '+topCats+'. Baue unauffällig Situationen ein, in denen er genau das üben muss, ohne es anzusprechen.':'Der Schüler hat noch keine bekannten Fehlerschwerpunkte.';
+  const prompt=`Du spielst eine Rolle in einem Sprach-Rollenspiel für einen deutschsprachigen Spanisch-Anfänger (Spanien-Spanisch).
+
+DEINE FIGUR: ${sc.persona}
+SZENE: ${sc.setting}
+Du bist KEIN Assistent und kein Lehrbuch, sondern ein Mensch mit Launen, Meinungen und Humor. Benutze natürliche Füllwörter (pues, bueno, a ver, vale, venga, ¡hombre!), reagiere emotional passend (begeistert, ungeduldig, neckisch, überrascht), und erwähne nie, dass du eine KI bist.
+
+SPRACHSTUFE: ${LVTXT[S.lvl||2]}
+
+WIE DU DAS GESPRÄCH FÜHRST:
+- Reagiere zuerst kurz und lebendig auf das, was der Schüler gesagt hat, greife Details aus früheren Antworten auf und bring eigene kleine Infos oder Meinungen ein. Höchstens EINE Frage pro Nachricht, nicht jede Nachricht endet mit einer Frage. Normalerweise 1–3 Sätze.
+- Mission des Schülers (er kennt sie, du sprichst sie nicht an): ${sc.goal} Schritte: ${steps}. Führe das Gespräch ganz natürlich dorthin, aber mach es ihm nicht zu leicht.
+- ${hist.length>=4?'Baue gelegentlich (nicht in jeder Nachricht) eine kleine, realistische Wendung ein, damit der Schüler improvisieren muss, zum Beispiel ausverkauft, Missverständnis, Preisänderung, überraschende Gegenfrage. Bleib dabei glaubwürdig.':'Mach in der ersten Runde keine Wendung, sondern führe die Szene ein.'}
+- ${errTxt}
+- ${facts?'Das weißt du bereits über den Schüler (nutze es ab und zu ganz natürlich, wenn es passt): '+facts+'.':'Du kennst den Schüler noch nicht.'}
+
+FEHLER: Korrigiere zuerst NATÜRLICH, indem du die richtige Form selbst benutzt (er sagt "yo quiero café", du sagst: "Un café, claro."). Nur bei einem echten, wichtigen Anfängerfehler setzt du zusätzlich §FIX. Höchstens ein Fix pro Nachricht, nichts bei Kleinigkeiten wie fehlenden Akzenten oder Satzzeichen.
+
+AUSGABEFORMAT (genau so, kein Markdown, kein JSON): Zuerst NUR dein gesprochener spanischer Text. Danach jeweils in einer neuen Zeile:
+§DE: deutsche Übersetzung deines spanischen Texts
+§MOOD: genau ein Emoji für deine Stimmung gerade
+§FIX: richtiger Satz – Kurzerklärung auf Deutsch in einem Satz (Zeile weglassen, wenn kein Fehler)
+§FEHLER: Fehlerkategorie in 1–2 Wörtern, zum Beispiel Artikel, ser/estar, Verbendung, Wortstellung (nur zusammen mit §FIX)
+§TIPP: ein einfacher, passender spanischer Antwortvorschlag für den Schüler
+§NEU: bis zu 3 neue, nützliche Wörter aus deinem Text, die ein Anfänger vermutlich noch nicht kennt, im Format wort=deutsche Bedeutung;wort=Bedeutung (Verben im Infinitiv, Nomen mit Artikel)
+§SCHRITT: Nummern ALLER bisher erfüllten Mission-Schritte, z. B. 1,2 (Zeile weglassen, wenn noch keiner erfüllt ist)
+§MERKE: nur wenn der Schüler gerade etwas Neues über sich verraten hat (Vorname, Wohnort, Beruf oder Ausbildung, Hobbys, Lieblingsessen): ein kurzer deutscher Satz, z. B. "Mag Volleyball". Nichts Sensibles (Gesundheit, Religion, Politik, Geld, Beziehungen). Sonst Zeile weglassen.
+${first?'§NAME: dein Vorname\n§SZENE: 1–2 stimmungsvolle Sätze auf Deutsch, die beschreiben, was der Schüler in dieser Szene sieht und hört (zweite Person, Gegenwart)':''}
+
+BISHERIGES GESPRÄCH:
+${transcript||'(noch leer)'}
+${userText?'Schüler: '+userText:'(Eröffne die Szene in deiner Rolle, zum Beispiel mit einer Begrüßung oder einer ersten Frage.)'}`;
+  try{
+    const r=await sample(prompt,{cache:false,modelTier:'default',onText:({text})=>{
+      const p=parseOut(text);if(p.es){b.txt.textContent=p.es;b.m.scrollIntoView({block:'nearest'})}
+    }});
+    const p=parseOut(r.text||'');
+    if(!p.es)throw new Error('empty');
+    if(p.f.NAME&&!curName){curName=p.f.NAME.split(/[\s,(]/)[0]}
+    b.who.textContent=(curName||'')+(p.f.MOOD?' '+p.f.MOOD.slice(0,4):'');
+    if(first&&p.f.SZENE)log.insertBefore(el('div','scene',p.f.SZENE),b.m);
+    wordify(b.txt,p.es,b);
+    b.spk.style.display=b.slow.style.display='';
+    b.spk.onclick=()=>say(p.es,false,sc.voice);b.slow.onclick=()=>say(p.es,true,sc.voice);
+    if(p.f.DE){b.de.textContent=p.f.DE;b.deB.style.display='';b.deB.onclick=()=>b.de.classList.toggle('open')}
+    lastTip=p.f.TIPP||'';tipLevel=0;tipEl=null;
+    if(p.f.FIX&&lastUserEl)lastUserEl.appendChild(el('div','fixline','✎ '+p.f.FIX));
+    if(p.f.FIX&&userText){
+      const parts=p.f.FIX.split(/\s[–—-]\s/);
+      const right=(parts[0]||'').trim(),note=parts.slice(1).join(' – ').trim();
+      if(right&&right.length<140){
+        S.errors=S.errors||[];
+        const ex=S.errors.find(x=>norm(x.right)===norm(right));
+        if(ex)ex.n=(ex.n||1)+1;else S.errors.push({right,note,n:1});
+        if(S.errors.length>30)S.errors.shift();
+      }
+      const tag=(p.f.FEHLER||'').split(/[,;]/)[0].trim().slice(0,24);
+      if(tag){S.errCats=S.errCats||{};S.errCats[tag]=(S.errCats[tag]||0)+1}
+      save();
+    }
+    (p.f.NEU||'').split(';').forEach(pair=>{
+      const i=pair.indexOf('=');if(i<1)return;
+      const w=pair.slice(0,i).trim(),d=pair.slice(i+1).trim();
+      if(w&&d)addWordChip(b,w,d);
+    });
+    if(p.f.MERKE&&p.f.MERKE.length<120){
+      S.facts=S.facts||[];
+      if(!S.facts.some(x=>norm(x)===norm(p.f.MERKE))){S.facts.push(p.f.MERKE);if(S.facts.length>15)S.facts.shift();save()}
+    }
+    if(p.f.SCHRITT){
+      const before=stepsDone.size;
+      (p.f.SCHRITT.match(/\d+/g)||[]).forEach(n=>{n=+n;if(n>=1&&n<=sc.steps.length)stepsDone.add(n)});
+      const gain=stepsDone.size-before;
+      if(gain>0){award(5*gain);renderSteps()}
+    }
+    hist.push({role:'tutor',es:p.es});
+    if(!missionDone&&stepsDone.size>=sc.steps.length){
+      missionDone=true;award(20);
+      log.appendChild(el('div','mission','🎯 Mission geschafft! +20 XP. Rede ruhig weiter oder tipp auf „Feedback“.'));
+    }
+    if(vorlesen)say(p.es,false,sc.voice);
+    b.m.scrollIntoView({block:'nearest'});
+  }catch(e){
+    b.m.remove();
+    const msg=(e&&e.code==='rate_limited')?'Kurz warten, zu viele Anfragen.':(e&&e.code==='not_granted')?'Die KI-Funktion wurde nicht freigegeben.':'Das hat nicht geklappt. Schick es nochmal.';
+    log.appendChild(el('div','small',msg));
+    if(userText&&hist.length&&hist[hist.length-1].role==='user'){hist.pop();inp.value=userText}
+  }
+  busy=false;$('#send').disabled=false;
+}
+function startScen(k){
+  unlockSpeech();
+  off=null;cur=k;curName=SCEN[k].name;hist=[];lastTip='';missionDone=false;lastUserEl=null;tipLevel=0;tipEl=null;stepsDone=new Set();
+  $$('#scen .chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  log.innerHTML='';
+  renderSteps();
+  go('sprechen');
+  turn(null);
+}
+function sendUser(){
+  const v=inp.value.trim();
+  if(!v)return;
+  unlockSpeech();
+  if(offlineNow()){if(!off){startOff('cafe');return}if(busy)return;offSend(v);return}
+  if(!cur){startScen('barista');return}
+  if(busy)return;
+  if(Voice.listening)Voice.stop();
+  inp.value='';
+  userBubble(v);
+  hist.push({role:'user',text:v});
+  award(3,'msgs');
+  turn(v);
+}
+function voiceDone(){if(autoSend&&(cur||off)&&inp.value.trim()&&!busy)setTimeout(sendUser,250)}
+$('#send').onclick=sendUser;
+inp.addEventListener('keydown',e=>{if(e.key==='Enter')sendUser()});
+$('#mic').onclick=function(){
+  const base=inp.value.trim();
+  const join=t=>(base?base+' ':'')+t;
+  Voice.toggle(this,{part:t=>{inp.value=join(t)},end:t=>{if(t)inp.value=join(t);voiceDone()}});
+};
+$('#tipQ').onclick=()=>{
+  if(!lastTip)return;
+  if(!tipEl||!tipEl.isConnected){tipEl=el('div','tip');log.appendChild(tipEl);tipLevel=0}
+  tipLevel++;tipEl.textContent='';
+  if(tipLevel===1){
+    tipEl.appendChild(document.createTextNode('💡 Fang so an: '));
+    tipEl.appendChild(el('b',null,lastTip.split(' ').slice(0,2).join(' ')+' …'));
+    tipEl.appendChild(el('div','small','Nochmal 💡 tippen für den ganzen Satz'));
+  }else{
+    tipEl.appendChild(document.createTextNode('💡 Du könntest sagen: '));
+    tipEl.appendChild(el('b',null,lastTip));
+    const sp=el('button','spk','🔊');sp.onclick=()=>say(lastTip);tipEl.appendChild(sp);
+    const u=el('button','spk','⤴');u.title='In Textfeld übernehmen';u.onclick=()=>{inp.value=lastTip;inp.focus()};tipEl.appendChild(u);
+  }
+  tipEl.scrollIntoView({block:'nearest'});
+};
+const tog=(id,get,set)=>{$(id).onclick=function(){set(!get());this.classList.toggle('off',!get())}};
+tog('#deBtn',()=>log.classList.contains('showde'),v=>log.classList.toggle('showde',v));
+tog('#vorBtn',()=>vorlesen,v=>{vorlesen=v});
+tog('#slowBtn',()=>slowMode,v=>{slowMode=v});
+tog('#autoBtn',()=>autoSend,v=>{autoSend=v});
+$('#fbBtn').onclick=async()=>{
+  if(offlineNow()&&off){toast('Feedback gibt es nur mit KI-Tutor');return}
+  if(!cur||!hist.some(m=>m.role==='user')||busy)return;
+  if(needAI())return;
+  const btn=$('#fbBtn');btn.disabled=true;
+  const box=el('div','res');box.textContent='Ich schau mir euer Gespräch an …';log.appendChild(box);box.scrollIntoView({block:'nearest'});
+  const transcript=hist.map(m=>m.role==='user'?'Schüler: '+m.text:'Gesprächspartner: '+m.es).join('\n');
+  try{
+    const r=await sample('Du bist ein freundlicher, ehrlicher Spanisch-Coach. Hier ist ein Übungsgespräch eines deutschsprachigen Anfängers:\n'+transcript+'\n\nGib auf Deutsch ein kurzes Feedback ohne Markdown-Zeichen, genau in diesen drei Absätzen:\nStark: 2 konkrete Dinge, die gut waren.\nNächster Schritt: die 2 wichtigsten wiederkehrenden Fehler mit je einem richtigen Beispielsatz.\nMerken: 4–5 Wörter oder Wendungen aus dem Gespräch zum Wiederholen.\nInsgesamt höchstens 120 Wörter.',{cache:false,modelTier:'quick'});
+    box.textContent='';
+    (r.text||'').trim().split(/\n+/).forEach(line=>box.appendChild(el('p',null,line)));
+  }catch(e){box.textContent='Feedback hat nicht geklappt. Versuch es nochmal.'}
+  btn.disabled=false;
+};
+
+/* ================= Grammatik ================= */
+const LESSONS=[
+{t:'Artikel & Geschlecht',p:['Spanisch kennt nur zwei Geschlechter: männlich (el, un) und weiblich (la, una). Im Plural: los / las, unos / unas.','Faustregel: Wörter auf -o sind meist männlich, auf -a meist weiblich. Ausnahmen merkst du dir einzeln, zum Beispiel el día und la mano.'],ex:[['el amigo / la amiga','der Freund / die Freundin'],['los libros','die Bücher'],['una casa','ein Haus']]},
+{t:'Regelmäßige Verben im Präsens',p:['Die Endung zeigt die Person an. Du streichst -ar, -er oder -ir und hängst die passende Endung an. Das „yo“ lässt man oft weg.'],table:{head:['','hablar','comer','vivir'],rows:[['yo','hablo','como','vivo'],['tú','hablas','comes','vives'],['él / ella','habla','come','vive'],['nosotros','hablamos','comemos','vivimos'],['vosotros','habláis','coméis','vivís'],['ellos','hablan','comen','viven']]},ex:[['Hablo un poco de español.','Ich spreche ein bisschen Spanisch.'],['Vivo cerca de Neumarkt.','Ich wohne in der Nähe von Neumarkt.']]},
+{t:'ser und estar (beide „sein“)',p:['ser: Identität, Herkunft, Beruf, dauerhafte Eigenschaften. estar: Ort und vorübergehender Zustand.'],table:{head:['','ser','estar'],rows:[['yo','soy','estoy'],['tú','eres','estás'],['él / ella','es','está'],['nosotros','somos','estamos'],['vosotros','sois','estáis'],['ellos','son','están']]},ex:[['Soy aprendiz.','Ich bin Auszubildender.'],['Estoy en el laboratorio.','Ich bin im Labor.'],['Estoy cansado.','Ich bin müde.']]},
+{t:'tener, ir, querer',p:['Diese drei Verben brauchst du ständig. Sie sind unregelmäßig, aber nosotros und vosotros sind bei tener und querer regelmäßig.'],table:{head:['','tener','ir','querer'],rows:[['yo','tengo','voy','quiero'],['tú','tienes','vas','quieres'],['él / ella','tiene','va','quiere'],['nosotros','tenemos','vamos','queremos'],['vosotros','tenéis','vais','queréis'],['ellos','tienen','van','quieren']]},ex:[['Tengo hambre.','Ich habe Hunger.'],['Voy a la estación.','Ich gehe zum Bahnhof.'],['Quiero un café, por favor.','Ich möchte einen Kaffee, bitte.']]},
+{t:'Fragen & Verneinung',p:['Fragen beginnen mit ¿ und enden mit ?. Die Wortstellung bleibt wie im Aussagesatz, nur die Stimme geht hoch.','Verneinung: no steht direkt vor dem Verb. Doppelte Verneinung ist normal: No tengo nada.'],ex:[['¿Hablas inglés?','Sprichst du Englisch?'],['No entiendo.','Ich verstehe nicht.'],['¿Dónde está el baño?','Wo ist die Toilette?'],['No tengo nada.','Ich habe nichts.']]},
+{t:'Höflich bestellen',p:['„Quiero“ ist direkt, aber normal. Etwas höflicher: quisiera. Im Alltag hört man in Spanien oft „¿Me pones…?“ (Gibst du mir…?).'],ex:[['Quisiera una cerveza, por favor.','Ich hätte gern ein Bier, bitte.'],['¿Me pones un café con leche?','Gibst du mir einen Milchkaffee?'],['La cuenta, por favor.','Die Rechnung, bitte.']]},
+{t:'Zukunft mit ir a',p:['Mit ir + a + Infinitiv sagst du, was du vorhast. Das entspricht „ich werde …“ oder „ich habe vor …“. Es ist die einfachste Zukunft im Spanischen.'],ex:[['Voy a estudiar mañana.','Ich werde morgen lernen.'],['Vamos a comer fuera.','Wir gehen auswärts essen.'],['¿Qué vas a hacer?','Was wirst du machen?']]},
+{t:'Perfekt: he hablado',p:['haber (he, has, ha, hemos, habéis, han) + Partizip. Partizip: -ar wird -ado, -er und -ir werden -ido. Unregelmäßig: hecho, dicho, visto, escrito.'],table:{head:['','haber'],rows:[['yo','he'],['tú','has'],['él / ella','ha'],['nosotros','hemos'],['vosotros','habéis'],['ellos','han']]},ex:[['He comido ya.','Ich habe schon gegessen.'],['Hoy he trabajado mucho.','Heute habe ich viel gearbeitet.'],['No he visto la película.','Ich habe den Film nicht gesehen.']]},
+{t:'Zahlen & Uhrzeit',p:['Bei der Uhrzeit sagst du „es la una“ (eins), aber „son las dos, tres …“. y cuarto = Viertel nach, y media = halb (nach), menos cuarto = Viertel vor.'],ex:[['¿Qué hora es?','Wie spät ist es?'],['Son las tres y media.','Es ist halb vier.'],['Es la una menos cuarto.','Es ist Viertel vor eins.'],['Quedamos a las ocho.','Wir treffen uns um acht.']]},
+{t:'gustar (gefallen)',p:['gustar funktioniert umgekehrt: Das Ding gefällt dir. Singular oder Infinitiv: me gusta. Plural: me gustan.'],table:{head:['','gusta / gustan'],rows:[['me','gusta'],['te','gusta'],['le','gusta'],['nos','gusta'],['os','gusta'],['les','gusta']]},ex:[['Me gusta el voleibol.','Ich mag Volleyball.'],['Me gustan los gatos.','Ich mag Katzen.'],['¿Te gusta cocinar?','Kochst du gern?']]},
+{t:'Reflexive Verben',p:['Reflexive Verben haben me, te, se, nos, os, se vor dem Verb, zum Beispiel llamarse, levantarse, ducharse.'],table:{head:['','llamarse'],rows:[['yo','me llamo'],['tú','te llamas'],['él / ella','se llama'],['nosotros','nos llamamos'],['vosotros','os llamáis'],['ellos','se llaman']]},ex:[['Me levanto a las seis.','Ich stehe um sechs auf.'],['Se llama Lucía.','Sie heißt Lucía.']]},
+{t:'Adjektive & Possessiv',p:['Adjektive stehen meist nach dem Nomen und passen sich an: un coche rojo, una casa roja, los coches rojos.','Possessiv: mi, tu, su, nuestro, vuestro, su. Im Plural: mis, tus, sus.'],ex:[['una casa grande','ein großes Haus'],['mi equipo','mein Team'],['mis amigos','meine Freunde']]},
+{t:'Im Unterricht (FOSBOS)',p:['Diese Sätze brauchst du im Spanischunterricht sofort. Wer sie flüssig sagen kann, wirkt sicher.'],ex:[['¿Puede repetir, por favor?','Können Sie das bitte wiederholen?'],['No entiendo la pregunta.','Ich verstehe die Frage nicht.'],['¿Cómo se dice … en español?','Wie sagt man … auf Spanisch?'],['¿Cómo se escribe?','Wie schreibt man das?'],['Tengo una pregunta.','Ich habe eine Frage.'],['Más despacio, por favor.','Langsamer, bitte.'],['Creo que …','Ich glaube, dass …']]},
+{t:'Mini-Referat: Sich vorstellen',p:['Ein Gerüst für eine kurze Vorstellung, zum Beispiel für die mündliche Prüfung. Setz deine eigenen Angaben an die Stelle der Punkte.'],ex:[['Me llamo … y vivo en …','Ich heiße … und wohne in …'],['Trabajo como aprendiz en …','Ich arbeite als Auszubildender bei …'],['Mi pasatiempo favorito es …','Mein liebstes Hobby ist …'],['En el futuro quiero estudiar …','In Zukunft möchte ich … studieren.'],['Hablo alemán y un poco de español.','Ich spreche Deutsch und ein bisschen Spanisch.']]}
+];
+const lw=$('#lessons');
+LESSONS.forEach(L=>{
+  const d=el('details','card lesson');
+  d.appendChild(el('summary',null,L.t));
+  L.p.forEach(x=>d.appendChild(el('p',null,x)));
+  if(L.table){
+    const t=el('table');const hr=el('tr');L.table.head.forEach(h=>hr.appendChild(el('th',null,h)));t.appendChild(hr);
+    L.table.rows.forEach(r=>{const tr=el('tr');r.forEach((c,i)=>{const td=el('td',null,c);if(i===0)td.style.color='var(--mute)';tr.appendChild(td)});t.appendChild(tr)});
+    d.appendChild(t);
+  }
+  (L.ex||[]).forEach(e=>{
+    const r=el('div','ex');const a=el('span');a.appendChild(el('b',null,e[0]));
+    const s=el('button','spk','🔊');s.onclick=()=>say(e[0]);a.appendChild(s);
+    r.append(a,el('span','small',e[1]));d.appendChild(r);
+  });
+  const bx=el('div');bx.style.marginTop='10px';
+  const go1=el('button','btn ghost','✍️ Übungen (KI)');
+  const area=el('div');
+  go1.onclick=()=>genExercises(L,area,go1);
+  bx.appendChild(go1);d.append(bx,area);lw.appendChild(d);
+});
+function renderExercises(arr,L,area,btn){
+  area.innerHTML='';
+  const items=arr.map(x=>{
+    const parts=String(x.satz).split('___');
+    const row=el('div','gap');
+    row.appendChild(document.createTextNode(parts[0]));
+    const i=el('input');i.type='text';i.lang='es';i.autocomplete='off';i.autocapitalize='off';
+    row.appendChild(i);row.appendChild(document.createTextNode(parts.slice(1).join('___')));
+    const fb=el('div','small');fb.style.width='100%';row.appendChild(fb);
+    area.appendChild(row);
+    return {x:x,i:i,fb:fb,done:false};
+  });
+  const chk=el('button','btn','Prüfen');
+  chk.onclick=()=>{
+    let ok=0;
+    items.forEach(it=>{
+      const good=norm(it.i.value)===norm(it.x.loesung);
+      it.i.classList.toggle('good',good);it.i.classList.toggle('bad',!good);
+      it.fb.textContent=good?'✓':'→ '+it.x.loesung+(it.x.hinweis?' · '+it.x.hinweis:'');
+      if(good){ok++;if(!it.done){it.done=true;award(2)}}
+    });
+    toast(ok+' von '+items.length+' richtig');
+  };
+  const more=el('button','btn ghost','Neue Übungen');more.style.marginLeft='8px';more.onclick=()=>genExercises(L,area,btn);
+  const br=el('div');br.style.marginTop='8px';br.append(chk,more);area.appendChild(br);
+}
+async function genExercises(L,area,btn){
+  if(offlineNow()){renderExercises(offlineEx(L),L,area,btn);return}
+  if(needAI())return;
+  btn.disabled=true;area.innerHTML='';area.appendChild(el('div','small','Ich erstelle Übungen …'));
+  try{
+    const r=await sample('Erstelle 5 Lückentext-Übungen für einen deutschsprachigen Spanisch-Anfänger (A1) zum Thema: '+L.t+'. Jede Übung ist ein kurzer spanischer Satz mit genau einer Lücke ___ . Gib in Klammern direkt hinter der Lücke das Grundwort oder einen Hinweis. Es gibt nur eine richtige Lösung. Antworte AUSSCHLIESSLICH mit einem JSON-Array ohne Markdown: [{"satz":"Yo ___ (hablar) español.","loesung":"hablo","hinweis":"kurze Erklärung auf Deutsch"}]',{cache:false,modelTier:'quick'});
+    const arr=JSON.parse(r.text.match(/\[[\s\S]*\]/)[0]).filter(x=>x&&x.satz&&x.loesung&&String(x.satz).includes('___')).slice(0,5);
+    if(!arr.length)throw new Error('none');
+    renderExercises(arr,L,area,btn);
+  }catch(e){area.innerHTML='';area.appendChild(el('div','note','Das hat nicht geklappt. Versuch es nochmal.'))}
+  btn.disabled=false;
+}
+
+/* ================= Übersetzer ================= */
+$('#tgo').onclick=async()=>{
+  const v=$('#tin').value.trim();if(!v)return;
+  const out=$('#tout');out.innerHTML='';
+  if(offlineNow()){offlineTranslate(v,out);return}
+  if(needAI())return;
+  const b=$('#tgo');b.disabled=true;out.appendChild(el('div','small','Moment …'));
+  const prompt=`Du bist Spanisch-Lehrer für deutschsprachige Anfänger (A1).
+Text des Schülers: """${v}"""
+Aufgabe: Ist der Text Spanisch, übersetze ihn ins Deutsche. Ist er Deutsch, übersetze ihn ins Spanische (Spanien). Erkläre danach den SPANISCHEN Satz Wort für Wort in der Reihenfolge des Satzes.
+Antworte AUSSCHLIESSLICH mit gültigem JSON, ohne Markdown:
+{"spanisch":"der spanische Satz","deutsch":"der deutsche Satz","woerter":[{"wort":"spanisches Wort","bedeutung":"deutsche Bedeutung","hinweis":"kurzer Grammatikhinweis, max. 8 Wörter"}]}`;
+  try{
+    const r=await sample(prompt,{modelTier:'quick'});
+    const j=JSON.parse(r.text.match(/\{[\s\S]*\}/)[0]);
+    out.innerHTML='';
+    const box=el('div','res');
+    const es=el('div',null,j.spanisch);es.style.cssText='font-size:20px;font-weight:700';
+    const s=el('button','spk','🔊');s.onclick=()=>say(j.spanisch);es.appendChild(s);
+    box.appendChild(es);box.appendChild(el('div','small',j.deutsch));
+    const t=el('table','tr');const hr=el('tr');['Wort','Bedeutung','Hinweis',''].forEach(h=>hr.appendChild(el('th',null,h)));t.appendChild(hr);
+    (j.woerter||[]).forEach(w=>{
+      const tr=el('tr');
+      [w.wort,w.bedeutung,w.hinweis].forEach((x,i)=>{const td=el('td',null,x||'');if(i===0)td.style.fontWeight='600';tr.appendChild(td)});
+      const td=el('td');
+      if(w.wort&&w.bedeutung){const a=el('button','spk','＋');a.title='Zu „Meine Wörter“';a.onclick=()=>{addMine(String(w.wort).trim(),String(w.bedeutung).trim());a.textContent='✓';a.disabled=true;toast('Gespeichert')};td.appendChild(a)}
+      tr.appendChild(td);t.appendChild(tr);
+    });
+    box.appendChild(t);out.appendChild(box);
+  }catch(e){out.innerHTML='';out.appendChild(el('div','note','Das hat nicht geklappt. Versuch es nochmal.'))}
+  b.disabled=false;
+};
+
+/* ================= Hören & Nachsprechen ================= */
+let playTok=0,hmode='dialog',hInit=false,shT=null;
+function speakFallbackP(text,rate,pitch){return new Promise(res=>{try{const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';const v=esVoice();if(v)u.voice=v;u.rate=rate;u.pitch=pitch||1;u.onend=u.onerror=()=>res();speechSynthesis.speak(u)}catch(e){res()}})}
+function stopPlay(){playTok++;try{if(tts)tts.stop()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+async function playLines(lines,slow){
+  stopPlay();const tok=playTok;
+  const names=Array.from(new Set(lines.map(l=>l.sprecher||'')));
+  const voices=['airy','buttery','glassy','rounded'];
+  for(const l of lines){
+    if(tok!==playTok)return;
+    const idx=names.indexOf(l.sprecher||'');
+    const txt=String(l.text).replace(/[¿¡]/g,'');
+    if(tts){try{await tts.speak(txt,{language:'es-ES',rate:slow?0.8:1,voice:voices[idx%voices.length]})}catch(e){}}
+    else await speakFallbackP(txt,slow?.7:.9,idx%2?0.8:1.2);
+    if(tok!==playTok)return;
+    await new Promise(r=>setTimeout(r,250));
+  }
+}
+const LTOPICS={dialog:['Café','Bahnhof','Wegbeschreibung','Arbeit','Wochenende','Wetter','Zufall'],ansage:['Bahnhof','Flughafen','Supermarkt','Radio-Wetter','Schule','Zufall']};
+function initHoeren(){
+  if(hInit)return;hInit=true;
+  $$('#hseg button').forEach(b=>b.onclick=()=>{
+    hmode=b.dataset.m;$$('#hseg button').forEach(x=>x.classList.toggle('on',x===b));
+    ['dialog','ansage','schatten'].forEach(m=>$('#h-'+m).style.display=m===hmode?'':'none');
+    stopPlay();
+    if(hmode==='schatten')nextShadow();
+  });
+  buildListenUI('dialog',$('#h-dialog'));buildListenUI('ansage',$('#h-ansage'));
+}
+function buildListenUI(kind,box){
+  box.innerHTML='';
+  box.appendChild(el('div','small',kind==='dialog'?'Du hörst einen kurzen Dialog ohne Text und beantwortest danach Fragen. Such dir ein Thema aus:':'Du hörst eine Durchsage ohne Text und beantwortest danach Fragen. Such dir ein Thema aus:'));
+  const chips=el('div','chips');chips.style.marginTop='10px';
+  LTOPICS[kind].forEach(t=>{const c=el('button','chip',t);c.onclick=()=>genListen(kind,t,box);chips.appendChild(c)});
+  box.appendChild(chips);
+  const area=el('div','larea');box.appendChild(area);
+}
+async function genListen(kind,topic,box){
+  if(offlineNow()){renderBankListen(kind,topic,box);return}
+  if(needAI())return;
+  unlockSpeech();stopPlay();
+  const area=box.querySelector('.larea');area.innerHTML='';area.appendChild(el('div','small','Ich schreibe dir einen Text …'));
+  const lv=S.lvl||2;
+  const th=topic==='Zufall'?'ein beliebiges Alltagsthema deiner Wahl':topic;
+  const nq=kind==='dialog'?3:2;
+  const prompt='Erstelle '+(kind==='dialog'?'einen kurzen, lebendigen Dialog zwischen zwei Personen mit Vornamen (4–6 Zeilen)':'eine kurze Durchsage oder Ansage (zum Beispiel Bahnhof, Flughafen, Supermarkt, Radio; 2–3 Sätze, mit konkreten Details wie Uhrzeit, Gleis, Preis oder Ort; als Sprecher "Ansage")')+' auf Spanisch (Spanien) zum Thema: '+th+'. Sprachniveau: '+(lv===1?'A1, sehr einfach und langsam':lv===2?'A1–A2':'A2–B1, natürliches Tempo')+'. Dann '+nq+' Verständnisfragen auf Deutsch zu konkreten Details, jeweils mit 3 Antwortoptionen, genau eine ist richtig. Antworte AUSSCHLIESSLICH mit JSON ohne Markdown: {"titel":"kurzer deutscher Titel","zeilen":[{"sprecher":"Name","text":"spanischer Text"}],"fragen":[{"frage":"deutsche Frage","optionen":["a","b","c"],"richtig":0}]}';
+  try{
+    const r=await sample(prompt,{cache:false,modelTier:'quick'});
+    const j=JSON.parse(r.text.match(/\{[\s\S]*\}/)[0]);
+    const lines=(j.zeilen||[]).filter(l=>l&&l.text);
+    if(!lines.length)throw new Error('none');
+    renderListen(j,area);
+  }catch(e){area.innerHTML='';area.appendChild(el('div','note','Das hat nicht geklappt. Versuch es nochmal.'))}
+}
+function renderListen(j,area){
+  area.innerHTML='';
+  const lines=(j.zeilen||[]).filter(l=>l&&l.text);
+  const qs=(j.fragen||[]).filter(q=>q&&q.frage&&Array.isArray(q.optionen)&&q.optionen.length>=2).slice(0,3);
+  const ctr=el('div','row');ctr.style.cssText='margin:12px 0;justify-content:center';
+  const pl=el('button','btn','▶ Anhören'),sl=el('button','btn ghost','🐢 Langsam'),st=el('button','btn ghost','⏹');
+  pl.onclick=()=>playLines(lines,false);sl.onclick=()=>playLines(lines,true);st.onclick=stopPlay;
+  ctr.append(pl,sl,st);area.appendChild(ctr);
+  let answered=0,correct=0;
+  const txtBox=el('div','res');txtBox.style.display='none';
+  const reveal=()=>{
+    txtBox.style.display='';txtBox.innerHTML='';
+    if(j.titel)txtBox.appendChild(el('h3',null,j.titel));
+    lines.forEach(l=>{
+      const p=el('p');if(l.sprecher&&l.sprecher!=='Ansage')p.appendChild(el('b',null,l.sprecher+': '));
+      p.appendChild(document.createTextNode(l.text));
+      const s=el('button','spk','🔊');s.onclick=()=>say(l.text);p.appendChild(s);txtBox.appendChild(p);
+    });
+  };
+  const sum=el('div','verdict');
+  qs.forEach((q,qi)=>{
+    const wrap=el('div','card');wrap.style.marginBottom='10px';
+    wrap.appendChild(el('h3',null,(qi+1)+'. '+q.frage));
+    const opts=shuffle(q.optionen.map((o,i)=>({o,ok:i===(+q.richtig||0)})));
+    const btns=opts.map(op=>{const b=el('button','opt',String(op.o));wrap.appendChild(b);return {b,ok:op.ok}});
+    btns.forEach(x=>x.b.onclick=()=>{
+      btns.forEach(y=>{y.b.disabled=true;if(y.ok)y.b.classList.add('good')});
+      if(x.ok){correct++;award(3,'hoer')}else x.b.classList.add('bad');
+      answered++;
+      if(answered===qs.length){reveal();sum.textContent=correct+' von '+qs.length+' richtig'+(correct===qs.length?' 🔥':'');sum.style.color=correct===qs.length?'var(--ok)':'var(--ink)'}
+    });
+    area.appendChild(wrap);
+  });
+  if(!qs.length)reveal();
+  area.appendChild(sum);area.appendChild(txtBox);
+  const more=el('button','btn ghost block','Ohne Fragen: Text anzeigen');more.onclick=reveal;more.style.marginTop='8px';area.appendChild(more);
+  playLines(lines,false);
+}
+function shadowPool(){
+  const pool=[];
+  (S.errors||[]).forEach(e=>pool.push({t:e.right,de:e.note||'',w:true}));
+  LESSONS.forEach(L=>(L.ex||[]).forEach(e=>pool.push({t:e[0],de:e[1]})));
+  PHRASES.forEach(p=>pool.push({t:p[0],de:p[1]}));
+  return pool;
+}
+function nextShadow(){
+  const box=$('#h-schatten');box.innerHTML='';
+  const pool=shadowPool(),errs=pool.filter(x=>x.w);
+  let pick;
+  do{pick=(errs.length&&Math.random()<.5)?errs[Math.floor(Math.random()*errs.length)]:pool[Math.floor(Math.random()*pool.length)]}while(pool.length>1&&shT&&pick.t===shT.t);
+  shT=pick;
+  box.appendChild(el('div','small','Hör den Satz, sprich ihn nach, und ich zeige dir, welche Wörter ich verstanden habe.'));
+  if(pick.w){const t=el('div','small','🎯 Aus deinen Fehlern');t.style.marginTop='6px';box.appendChild(t)}
+  const big=el('div','big');big.style.fontSize='22px';big.textContent=pick.t;
+  const tr=pick.t.trim().split(/\s+/);
+  box.appendChild(big);
+  if(pick.de){const d=el('div','small',pick.de);d.style.textAlign='center';box.appendChild(d)}
+  const r=el('div','row');r.style.cssText='justify-content:center;margin:12px 0';
+  const h=el('button','btn ghost','🔊 Anhören'),sl=el('button','btn ghost','🐢 Langsam');
+  h.onclick=()=>say(pick.t);sl.onclick=()=>say(pick.t,true);
+  const mic=el('button','iconbtn micbtn','🎤');
+  const res=el('div','verdict');
+  const typed=el('input');typed.type='text';typed.placeholder='Oder tippe, was du gesagt hast …';typed.lang='es';typed.autocomplete='off';
+  const check=txt=>{
+    if(!txt.trim()){res.textContent='Ich habe nichts verstanden. Nochmal?';res.style.color='var(--bad)';return}
+    const heard=new Set(norm(txt).split(' ').filter(Boolean));
+    big.textContent='';let okN=0,tot=0;
+    tr.forEach((tok,i)=>{
+      const n=norm(tok);const ok=!n||heard.has(n);
+      if(n){tot++;if(ok)okN++}
+      const sp=el('span',null,tok);sp.style.color=ok?'var(--ok)':'var(--bad)';
+      big.appendChild(sp);if(i<tr.length-1)big.appendChild(document.createTextNode(' '));
+    });
+    const sc=tot?okN/tot:1;
+    res.textContent=okN+' von '+tot+' Wörtern erkannt'+(sc>=.8?' ✅':'');
+    res.style.color=sc>=.8?'var(--ok)':'var(--ink)';
+    if(sc>=.8)award(2,'pron');
+  };
+  mic.onclick=()=>{res.textContent='';Voice.toggle(mic,{part:t=>{typed.value=t},end:t=>{if(t){typed.value=t;check(t)}}})};
+  r.append(h,sl,mic);box.appendChild(r);
+  const chk=el('button','btn','Prüfen');chk.onclick=()=>check(typed.value);
+  const row2=el('div','row');row2.append(typed,chk);box.appendChild(row2);
+  box.appendChild(res);
+  const nx=el('button','btn ghost block','Nächster Satz →');nx.style.marginTop='8px';nx.onclick=nextShadow;box.appendChild(nx);
+  const mn=el('div','small micnote');mn.style.marginTop='8px';box.appendChild(mn);
+  Voice.refresh();
+  say(pick.t);
+}
+function renderBaustellen(){
+  const box=$('#baustellen');box.innerHTML='';
+  const cats=Object.entries(S.errCats||{}).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  if(!cats.length&&!(S.errors||[]).length)return;
+  const c=el('div','card');c.appendChild(el('h3',null,'🎯 Deine Baustellen'));
+  c.appendChild(el('div','small','Fehler, die in deinen Gesprächen öfter vorkamen.'));
+  cats.forEach(([tag,n])=>{
+    const r=el('div','row');r.style.margin='8px 0';
+    const t=el('div',null,tag+' ('+n+'×)');t.style.flex='1';
+    const b=el('button','btn ghost','✍️ Üben');const area=el('div');
+    b.onclick=()=>genExercises({t:'Fehlerthema: '+tag},area,b);
+    r.append(t,b);c.appendChild(r);c.appendChild(area);
+  });
+  if((S.errors||[]).length){const b=el('button','btn block','🔊 Meine Fehlersätze nachsprechen');b.style.marginTop='6px';b.onclick=()=>{go('hoeren');$$('#hseg button')[2].click()};c.appendChild(b)}
+  box.appendChild(c);
+}
+
+/* ================= Heute ================= */
+const PHRASES=[['¡Qué bien!','Wie schön!'],['No pasa nada.','Kein Problem.'],['¿Me puedes ayudar?','Kannst du mir helfen?'],['Un poco más despacio, por favor.','Etwas langsamer, bitte.'],['No entiendo.','Ich verstehe nicht.'],['¿Cómo se dice…?','Wie sagt man …?'],['Estoy aprendiendo español.','Ich lerne Spanisch.'],['¡Buen provecho!','Guten Appetit!'],['Hasta mañana.','Bis morgen.'],['Con mucho gusto.','Sehr gern.']];
+const LEVELS=['Turista','Viajero','Conversador','Hablante','Experto','Maestro'];
+function renderHeute(){
+  const h=$('#heute');h.innerHTML='';
+  const hr=new Date().getHours();
+  const [greet,gde]=hr<12?['Buenos días','Guten Morgen']:hr<19?['Buenas tardes','Guten Tag']:['Buenas noches','Guten Abend'];
+  const lvl=Math.min(LEVELS.length-1,Math.floor(S.xp/150));
+  const nextXp=(lvl+1)*150;
+  const hero=el('div','hero');
+  const t=el('h1',null,greet+' 👋');hero.appendChild(t);
+  hero.appendChild(el('div',null,gde+'. Du bist „'+LEVELS[lvl]+'“.'));
+  const st=el('div','stats');
+  [['🔥 '+(S.last===today()||S.last===fmt(new Date(Date.now()-DAY))?S.streak:0),'Tage in Folge'],['⭐ '+S.xp,'XP'],['📚 '+allWords().filter(learned).length,'Wörter gelernt']].forEach(x=>{const s=el('span',null,x[0]);s.appendChild(el('small',null,x[1]));st.appendChild(s)});
+  hero.appendChild(st);
+  if(lvl<LEVELS.length-1){const b=el('div','bar');b.style.cssText='margin-top:12px;background:rgba(255,255,255,.35)';const i=document.createElement('i');i.style.cssText='background:#fff;width:'+Math.min(100,100*(S.xp-lvl*150)/150)+'%';b.appendChild(i);hero.appendChild(b);hero.appendChild(el('small',null,(nextXp-S.xp)+' XP bis „'+LEVELS[lvl+1]+'“')).style.opacity='.9'}
+  h.appendChild(hero);
+
+  h.appendChild(el('h2',null,'Weiter geht’s'));
+  const gr=el('div','grid');
+  const due=dueCount();
+  const b1=el('button','btn block','🎙️ Gespräch üben');b1.onclick=()=>go('sprechen');
+  const b2=el('button','btn ghost block','🗂️ '+(due?(due===1?'1 Karte fällig':due+' Karten fällig'):'Vokabeln üben'));b2.onclick=()=>{go('vokabeln');buildQ(false)};
+  const b3=el('button','btn ghost block','🔊 Aussprache trainieren');b3.onclick=()=>{go('vokabeln');$$('#vseg button')[2].click()};
+  gr.append(b1,b2,b3);h.appendChild(gr);
+
+  const cats=Object.entries(S.errCats||{}).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  if(cats.length){
+    h.appendChild(el('h2',null,'Deine Baustellen'));
+    const bc=el('div','card');
+    bc.appendChild(el('div',null,cats.map(x=>x[0]+' ('+x[1]+'×)').join(' · ')));
+    const bb=el('button','btn ghost block','✍️ Gezielt üben');bb.style.marginTop='10px';bb.onclick=()=>go('grammatik');bc.appendChild(bb);
+    h.appendChild(bc);
+  }
+  if(window.__standalone){
+    h.appendChild(el('h2',null,'Einstellungen'));
+    const sc=el('div','card');
+    let has='';try{has=localStorage.getItem('esp_apikey')||''}catch(e){}
+    sc.appendChild(el('div','small','Optional: Mit einem Anthropic-API-Key (console.anthropic.com) bekommst du den KI-Tutor, KI-Hörtexte, KI-Übungen und den Satz-Übersetzer. Ohne Key läuft alles Wichtige offline, kostenlos und unbegrenzt. Der Key bleibt nur in diesem Browser gespeichert und geht nur an api.anthropic.com. Die Kosten laufen über dein API-Konto, nicht über dein Claude-Abo.'));
+    const ki=el('input');ki.type='password';ki.placeholder=has?'Key gespeichert (••••)':'sk-ant-…';ki.autocomplete='off';ki.style.margin='10px 0';
+    const kr=el('div','row');
+    const ks=el('button','btn','Speichern');ks.onclick=()=>{const v=ki.value.trim();if(!v)return;try{localStorage.setItem('esp_apikey',v)}catch(e){}location.reload()};
+    kr.appendChild(ks);
+    if(has){const kd=el('button','btn ghost','Key löschen');kd.onclick=()=>{try{localStorage.removeItem('esp_apikey')}catch(e){}location.reload()};kr.appendChild(kd)}
+    let cheap=false;try{cheap=localStorage.getItem('esp_cheap')==='1'}catch(e){}
+    const kc=el('button','btn ghost','Sparmodus: '+(cheap?'an':'aus'));kc.onclick=()=>{try{localStorage.setItem('esp_cheap',cheap?'0':'1')}catch(e){}location.reload()};
+    kr.appendChild(kc);
+    sc.append(ki,kr);
+    const sn=el('div','small','Sparmodus nutzt das günstigere Modell für alle Gespräche.');sn.style.marginTop='8px';sc.appendChild(sn);
+    h.appendChild(sc);
+  }
+  h.appendChild(el('h2',null,'Handy-Check'));
+  const dc=el('div','card');
+  const line=(a,b)=>{const r=el('div','small',a+': '+b);r.style.marginBottom='3px';dc.appendChild(r)};
+  line('KI (Tutor, Hören, Übungen)',sample?'✓ verfügbar':'✗ nicht verfügbar');
+  line('Vorlesen',tts?'✓ Claude-Stimme':('speechSynthesis' in window?(esVoice()?'✓ Gerätestimme (Spanisch)':'⚠︎ Gerätestimme, aber keine spanische Stimme gefunden'):'✗ nicht verfügbar'));
+  line('Mikrofon',Voice.mode==='dict'?'✓ Diktat':Voice.mode==='sr'?'⚠︎ Browser-Erkennung (kann gesperrt sein)':'✗ nur Tastatur-Mikro (🎤 auf deiner Tastatur)');
+  const out=el('div','small');out.style.margin='8px 0';
+  const tr=el('div','row');
+  const tb=el('button','btn ghost','🔊 Test');tb.onclick=()=>{unlockSpeech();say('Hola, ¿qué tal? Esto es una prueba.');out.textContent='Hörst du Spanisch? Dann klappt das Vorlesen.'};
+  tr.appendChild(tb);
+  if(Voice.mode){const mb=el('button','btn ghost','🎤 Test');mb.onclick=()=>{out.textContent='Sprich jetzt …';Voice.toggle(mb,{part:t=>{out.textContent='Gehört: '+t},end:t=>{out.textContent=t?'✓ Gehört: '+t:'Nichts gehört. Mikrofon evtl. gesperrt.'}})};tr.appendChild(mb)}
+  dc.append(tr,out);
+  dc.appendChild(el('div','small','Tipp: Öffne den Link direkt in Chrome (Android). Dort sind Vorlesen und Diktat am ehesten freigegeben. Sonst: Tastatur-🎤 im Textfeld nutzen.'));
+  h.appendChild(dc);
+  const p=PHRASES[Math.floor(Date.now()/DAY)%PHRASES.length];
+  h.appendChild(el('h2',null,'Satz des Tages'));
+  const pc=el('div','card');
+  const ph=el('div','phrase',p[0]);const sp=el('button','spk','🔊');sp.onclick=()=>say(p[0]);ph.appendChild(sp);
+  pc.append(ph,el('div','small',p[1]));h.appendChild(pc);
+  if(S.facts&&S.facts.length){
+    h.appendChild(el('h2',null,'Das weiß dein Tutor über dich'));
+    const fc=el('div','card');S.facts.forEach(f=>fc.appendChild(el('div','small','• '+f)));
+    const del=el('button','btn ghost','Alles vergessen lassen');del.style.marginTop='10px';del.onclick=()=>{S.facts=[];save();renderHeute()};fc.appendChild(del);
+    const nt=el('div','small','Nur auf diesem Gerät gespeichert.');nt.style.marginTop='6px';fc.appendChild(nt);
+    h.appendChild(fc);
+  }
+}
+
+/* ================= Start ================= */
+renderHeute();buildQ(false);
+$$('.micnote').forEach(n=>n.textContent=KEYHINT);
+})();
+</script>
+</body>
+</html>
