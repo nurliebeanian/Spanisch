@@ -102,7 +102,7 @@ select{flex:none;width:auto;max-width:100%}
 table.tr{width:100%;border-collapse:collapse;margin-top:10px;font-size:15px}
 table.tr td,table.tr th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 table.tr th{color:var(--mute);font-weight:600;font-size:13px}
-.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.chips.scroll::-webkit-scrollbar{display:none}.chips.scroll .chip{white-space:nowrap;flex:none}
+.chips.scroll{flex-wrap:wrap}
 .who{font-size:12px;font-weight:700;color:var(--mute);margin-bottom:2px}
 .scene{align-self:center;text-align:center;font-style:italic;color:var(--mute);font-size:14px;padding:4px 12px}
 .stp{font-size:14px;padding:2px 0}.stp.done{color:var(--ok);text-decoration:line-through}
@@ -119,6 +119,7 @@ table.tr th{color:var(--mute);font-weight:600;font-size:13px}
 <section id="sprechen">
   <div class="seg" id="modeSeg"><button data-m="ki">KI-Tutor</button><button data-m="off">Offline (kostenlos)</button></div>
   <div class="seg" id="lvlSeg"><button data-l="1">Leicht</button><button data-l="2">Normal</button><button data-l="3">Immersion</button></div>
+  <button class="btn ghost block" id="pickBtn" style="display:none;margin-bottom:10px"></button>
   <div class="chips scroll" id="scen"></div>
   <div class="row" id="customRow" style="margin-bottom:10px">
     <input type="text" id="custom" placeholder="Eigenes Szenario, z. B. Beim Arzt" autocomplete="off">
@@ -710,6 +711,7 @@ function renderOffSteps(){
 }
 function startOff(k){
   unlockSpeech();
+  collapsePicker(SCRIPTS[k].n);
   cur=null;off={k:k,i:0,fails:0};curName=SCRIPTS[k].who;hist=[];lastTip='';missionDone=false;lastUserEl=null;tipLevel=0;tipEl=null;stepsDone=new Set();
   $$('#scen .chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
   log.innerHTML='';renderOffSteps();go('sprechen');
@@ -835,6 +837,7 @@ function buildChips(){
   scen.innerHTML='';
   const o=offlineNow(),src=o?SCRIPTS:SCEN;
   Object.keys(src).forEach(k=>{if(k==='custom')return;const b=el('button','chip',src[k].n);b.dataset.k=k;b.onclick=()=>o?startOff(k):startScen(k);scen.appendChild(b)});
+  $('#scen').style.display='';$('#pickBtn').style.display='none';
   $('#customRow').style.display=o?'none':'';
   $('#lvlSeg').style.display=o?'none':'';
   markSeg();
@@ -844,6 +847,8 @@ function setMode(m){
   offMode=(m==='off');S.mode=m;save();
   cur=null;off=null;log.innerHTML='';renderSteps();renderOffSteps();buildChips();
 }
+function collapsePicker(label){$('#scen').style.display='none';const pb=$('#pickBtn');pb.style.display='';pb.textContent='↻ Anderes Gespräch wählen (jetzt: '+label+')'}
+$('#pickBtn').onclick=()=>{const sc=$('#scen');sc.style.display=sc.style.display==='none'?'':'none'};
 buildChips();
 $$('#modeSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
 $('#customGo').onclick=()=>{
@@ -1014,6 +1019,7 @@ ${userText?'Schüler: '+userText:'(Eröffne die Szene in deiner Rolle, zum Beisp
 }
 function startScen(k){
   unlockSpeech();
+  collapsePicker(SCEN[k].n);
   off=null;cur=k;curName=SCEN[k].name;hist=[];lastTip='';missionDone=false;lastUserEl=null;tipLevel=0;tipEl=null;stepsDone=new Set();
   $$('#scen .chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
   log.innerHTML='';
