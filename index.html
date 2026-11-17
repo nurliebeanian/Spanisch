@@ -202,11 +202,40 @@ table.tr th{color:var(--mute);font-weight:600;font-size:13px}
 (function(){
   if(window.claude&&window.claude.use)return;
   window.__standalone=true;
-  const KEY='esp_apikey';
-  const getKey=()=>{try{return localStorage.getItem(KEY)||''}catch(e){return ''}};
+  const prov=()=>{try{return localStorage.getItem('esp_prov')||'anthropic'}catch(e){return 'anthropic'}};
+  const getKey=()=>{try{return localStorage.getItem('esp_key_'+prov())||(prov()==='anthropic'?localStorage.getItem('esp_apikey')||'':'')}catch(e){return ''}};
   const models=()=>{let cheap=false;try{cheap=localStorage.getItem('esp_cheap')==='1'}catch(e){}
     return cheap?{quick:'claude-haiku-5-5',default:'claude-haiku-5-5',complex:'claude-sonnet-5-5'}:{quick:'claude-haiku-5-5',default:'claude-sonnet-5-5',complex:'claude-opus-5-5'}};
+  async function sampleGemini(input,opts){
+    opts=opts||{};
+    const msgs=typeof input==='string'?[{role:'user',content:input}]:input;
+    const contents=msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+    const model=(opts.modelTier==='quick')?'gemini-flash-lite-latest':'gemini-flash-latest';
+    let res;
+    try{
+      res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':streamGenerateContent?alt=sse',{method:'POST',headers:{'content-type':'application/json','x-goog-api-key':getKey()},body:JSON.stringify({contents:contents,generationConfig:{maxOutputTokens:1500}}),signal:opts.signal});
+    }catch(e){throw {code:'network',message:String(e)}}
+    if(!res.ok){throw {code:(res.status===400||res.status===401||res.status===403)?'not_granted':res.status===429?'rate_limited':'error',message:await res.text().catch(()=>'')}}
+    const reader=res.body.getReader(),dec=new TextDecoder();let buf='',text='';
+    for(;;){
+      const r=await reader.read();if(r.done)break;
+      buf+=dec.decode(r.value,{stream:true});
+      let i;
+      while((i=buf.indexOf('\n'))>=0){
+        const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
+        if(line.indexOf('data:')!==0)continue;
+        const d=line.slice(5).trim();if(!d||d==='[DONE]')continue;
+        try{
+          const j=JSON.parse(d);const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+          const t=parts.map(p=>p.text||'').join('');
+          if(t){text+=t;if(opts.onText)opts.onText({text:text,delta:t})}
+        }catch(e){}
+      }
+    }
+    return {text:text,truncated:false};
+  }
   async function sample(input,opts){
+    if(prov()==='gemini')return sampleGemini(input,opts);
     opts=opts||{};
     const messages=typeof input==='string'?[{role:'user',content:input}]:input;
     const model=models()[opts.modelTier||'default']||'claude-sonnet-5-5';
@@ -344,7 +373,7 @@ useCap('sample').then(s=>{
     if(!window.__standalone)$('#aiNote').textContent='KI ist hier nicht verfügbar. Der Offline-Modus ist aktiv: kostenlos und ohne KI.';
     $('#aiNote').style.display='block';
   }
-  if(!s&&window.__standalone)$('#aiNote').textContent='Offline-Modus aktiv (kostenlos). Für den KI-Tutor trag unter Heute → Einstellungen einen Anthropic-API-Key ein.';
+  if(!s&&window.__standalone)$('#aiNote').textContent='Offline-Modus aktiv (kostenlos). Für den KI-Tutor trag unter Heute → Einstellungen einen API-Key ein (Google Gemini ist gratis).';
   buildChips();refreshHeute();
 });
 useCap('tts').then(t=>{tts=t;refreshHeute()});
@@ -1356,18 +1385,26 @@ function renderHeute(){
   if(window.__standalone){
     h.appendChild(el('h2',null,'Einstellungen'));
     const sc=el('div','card');
-    let has='';try{has=localStorage.getItem('esp_apikey')||''}catch(e){}
-    sc.appendChild(el('div','small','Optional: Mit einem Anthropic-API-Key (console.anthropic.com) bekommst du den KI-Tutor, KI-Hörtexte, KI-Übungen und den Satz-Übersetzer. Ohne Key läuft alles Wichtige offline, kostenlos und unbegrenzt. Der Key bleibt nur in diesem Browser gespeichert und geht nur an api.anthropic.com. Die Kosten laufen über dein API-Konto, nicht über dein Claude-Abo.'));
-    const ki=el('input');ki.type='password';ki.placeholder=has?'Key gespeichert (••••)':'sk-ant-…';ki.autocomplete='off';ki.style.margin='10px 0';
+    let prov='anthropic';try{prov=localStorage.getItem('esp_prov')||'anthropic'}catch(e){}
+    let has='';try{has=localStorage.getItem('esp_key_'+prov)||(prov==='anthropic'?localStorage.getItem('esp_apikey')||'':'')}catch(e){}
+    sc.appendChild(el('div','small','Optional: Mit einem eigenen API-Key bekommst du den KI-Tutor, KI-Hörtexte, KI-Übungen und den Satz-Übersetzer. Ohne Key läuft alles Wichtige offline, kostenlos und unbegrenzt. Der Key bleibt nur in diesem Browser gespeichert und geht nur an den Anbieter.'));
+    const pr=el('div','seg');pr.style.marginTop='10px';
+    [['gemini','Google Gemini (gratis)'],['anthropic','Anthropic (kostenpflichtig)']].forEach(x=>{
+      const b=el('button',prov===x[0]?'on':'',x[1]);b.onclick=()=>{try{localStorage.setItem('esp_prov',x[0])}catch(e){}location.reload()};pr.appendChild(b);
+    });
+    sc.appendChild(pr);
+    sc.appendChild(el('div','small',prov==='gemini'?'Gratis-Key: aistudio.google.com/apikey (Google-Konto nötig). Limits pro Tag, und Google darf die Anfragen laut Preisseite zur Verbesserung seiner Produkte nutzen. Erzähl dem Tutor deshalb nichts Privates.':'Key von platform.claude.com/settings/keys. Die Kosten laufen über dein API-Konto, nicht über dein Claude-Abo.'));
+    const ki=el('input');ki.type='password';ki.placeholder=has?'Key gespeichert (••••)':(prov==='gemini'?'AIza…':'sk-ant-…');ki.autocomplete='off';ki.style.margin='10px 0';
     const kr=el('div','row');
-    const ks=el('button','btn','Speichern');ks.onclick=()=>{const v=ki.value.trim();if(!v)return;try{localStorage.setItem('esp_apikey',v)}catch(e){}location.reload()};
+    const ks=el('button','btn','Speichern');ks.onclick=()=>{const v=ki.value.trim();if(!v)return;try{localStorage.setItem('esp_key_'+prov,v)}catch(e){}location.reload()};
     kr.appendChild(ks);
-    if(has){const kd=el('button','btn ghost','Key löschen');kd.onclick=()=>{try{localStorage.removeItem('esp_apikey')}catch(e){}location.reload()};kr.appendChild(kd)}
-    let cheap=false;try{cheap=localStorage.getItem('esp_cheap')==='1'}catch(e){}
-    const kc=el('button','btn ghost','Sparmodus: '+(cheap?'an':'aus'));kc.onclick=()=>{try{localStorage.setItem('esp_cheap',cheap?'0':'1')}catch(e){}location.reload()};
-    kr.appendChild(kc);
+    if(has){const kd=el('button','btn ghost','Key löschen');kd.onclick=()=>{try{localStorage.removeItem('esp_key_'+prov);if(prov==='anthropic')localStorage.removeItem('esp_apikey')}catch(e){}location.reload()};kr.appendChild(kd)}
+    if(prov==='anthropic'){
+      let cheap=false;try{cheap=localStorage.getItem('esp_cheap')==='1'}catch(e){}
+      const kc=el('button','btn ghost','Sparmodus: '+(cheap?'an':'aus'));kc.onclick=()=>{try{localStorage.setItem('esp_cheap',cheap?'0':'1')}catch(e){}location.reload()};
+      kr.appendChild(kc);
+    }
     sc.append(ki,kr);
-    const sn=el('div','small','Sparmodus nutzt das günstigere Modell für alle Gespräche.');sn.style.marginTop='8px';sc.appendChild(sn);
     h.appendChild(sc);
   }
   h.appendChild(el('h2',null,'Handy-Check'));
